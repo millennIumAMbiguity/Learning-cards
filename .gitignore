@@ -5,6 +5,9 @@
 [Bb]uilds/
 Assets/AssetStoreTools*
 
+# Lerning Cards
+mods/
+
 # Visual Studio cache directory
 .vs/
 
