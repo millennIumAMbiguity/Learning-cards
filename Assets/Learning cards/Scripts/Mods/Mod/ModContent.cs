@@ -5,10 +5,10 @@ namespace Learning_cards.Scripts.Mods.Mod
 	[Flags]
 	public enum ModContent
 	{
-		Cards,
-		CardPacks,
-		Characters,
-		Functions,
-		Translations
+		Cards        = 1 << 0,
+		CardPacks    = 1 << 1,
+		Characters   = 1 << 2,
+		Functions    = 1 << 3,
+		Translations = 1 << 4
 	}
 }

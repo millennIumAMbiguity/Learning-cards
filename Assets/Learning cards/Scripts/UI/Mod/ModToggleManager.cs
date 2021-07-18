@@ -7,8 +7,8 @@ namespace Learning_cards.Scripts.UI.Mod
 	public class ModToggleManager : MonoBehaviour
 	{
 		[SerializeField] private GameObject togglePrefab;
-		[SerializeField] private Transform content;
-			
+		[SerializeField] private Transform  content;
+
 		private void Start()
 		{
 			foreach (IMod mod in LoadMods.ActiveMods) {

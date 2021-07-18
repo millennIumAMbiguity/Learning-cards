@@ -10,10 +10,11 @@ namespace Learning_cards.Scripts.UI.Mod
 	[RequireComponent(typeof(Toggle))]
 	public class ModToggle : MonoBehaviour
 	{
-
 		[SerializeField] private TMP_Text title;
 		[SerializeField] private TMP_Text version;
-		
+
+		private IMod _mod;
+
 		public IMod Mod {
 			private get => _mod;
 			set {
@@ -23,8 +24,6 @@ namespace Learning_cards.Scripts.UI.Mod
 				GetComponent<Toggle>().isOn = value.Active;
 			}
 		}
-
-		private IMod _mod;
 
 		public void Toggle(bool state)
 		{

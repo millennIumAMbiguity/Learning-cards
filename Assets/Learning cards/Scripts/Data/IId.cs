@@ -2,7 +2,6 @@
 {
 	public interface ITitleId
 	{
-		string Title { get; set; }
-		int    Id    { get; set; }
+		int Id { get; set; }
 	}
 }

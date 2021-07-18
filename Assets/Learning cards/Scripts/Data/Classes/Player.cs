@@ -4,10 +4,10 @@ namespace Learning_cards.Scripts.Data.Classes
 {
 	public class Player : ITitleId
 	{
-		public string                   Title { get; set; }
-		public int                      Id    { get; set; }
+		public Dictionary<string, Card> Cards;
 		public Character                Character;
 		public int                      HitPointsDelta;
-		public Dictionary<string, Card> Cards;
+		public string                   Title;
+		public int                      Id { get; set; }
 	}
 }

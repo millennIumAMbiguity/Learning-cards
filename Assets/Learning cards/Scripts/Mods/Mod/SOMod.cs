@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Learning_cards.Scripts.Data.Classes;
+using UnityEngine;
 
 namespace Learning_cards.Scripts.Mods.Mod
 {
@@ -25,6 +27,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 			set => title = value;
 		}
 
-		public string Version { get; set; } = "";
+		public string Version                                                                  { get; set; } = "";
+		public void   GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list) { }
 	}
 }

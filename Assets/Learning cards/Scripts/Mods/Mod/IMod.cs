@@ -1,4 +1,7 @@
-﻿namespace Learning_cards.Scripts.Mods.Mod
+﻿using System.Collections.Generic;
+using Learning_cards.Scripts.Data.Classes;
+
+namespace Learning_cards.Scripts.Mods.Mod
 {
 	public interface IMod
 	{
@@ -7,6 +10,7 @@
 		string     Path    { get; set; }
 		string     Title   { get; set; }
 		string     Version { get; set; }
-		
+
+		void GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list);
 	}
 }

@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace Learning_cards.Scripts.UI
 {
-	public class RightClick : MonoBehaviour, IPointerClickHandler 
+	public class RightClick : MonoBehaviour, IPointerClickHandler
 	{
 		public UnityEvent onLeftClick;
 
