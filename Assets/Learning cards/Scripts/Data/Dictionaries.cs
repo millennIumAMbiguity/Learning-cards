@@ -18,6 +18,7 @@ namespace Learning_cards.Scripts.Data
 		private static Dictionary<string, Character> DCharacters;
 		private static Dictionary<string, Card>      DCards;
 		private static Dictionary<string, Function>  DCode;
+		private static Dictionary<string, string>    DGlobalVariable;
 
 		public static void Load()
 		{
@@ -27,9 +28,10 @@ namespace Learning_cards.Scripts.Data
 			LCards     = new List<Card>();
 			LCode      = new List<ICode>();
 
-			DCharacters = new Dictionary<string, Character>();
-			DCards      = new Dictionary<string, Card>();
-			DCode       = new Dictionary<string, Function>();
+			DCharacters     = new Dictionary<string, Character>();
+			DCards          = new Dictionary<string, Card>();
+			DCode           = new Dictionary<string, Function>();
+			DGlobalVariable = new Dictionary<string, string>();
 
 #region AddInternalCode
 
@@ -64,5 +66,7 @@ namespace Learning_cards.Scripts.Data
 
 		public static ICode    Code(int    id)   => LCode[id];
 		public static Function Code(string name) => DCode[name];
+
+		public static string GlobalVariable(string name) => DGlobalVariable[name];
 	}
 }
