@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEditor;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
@@ -32,35 +30,119 @@ namespace Learning_cards.Scripts.Data.Classes
 
 		public string Execute(string input = null)
 		{
+			//return CompiledCode;
 			string compiledCode             = CompiledCode;
-			if (input != null) {
-				compiledCode = compiledCode.Replace("?", input);
-			}
-			
+			if (input != null) compiledCode = compiledCode.Replace("?", input);
+
 			string[] rows = compiledCode.Split(';');
-			
+
 			foreach (string row in rows) {
-
 				//run external functions
-				string[] s      = row.Split('(', ')');
-				string   newRow = "";
-				for (int i = 1; i < s.Length; i += 2) {
-					string targetFunction = s[i - 1].Split(' ').Last();
+				string newRow = "";
+				{
+					newRow = RunFunctions(row);
 
-					newRow += 
-						s[i - 1].Substring(0, s[i - 1].Length - targetFunction.Length) + 
-						Dictionaries.Code(targetFunction).Code.Execute(s[i]);
+					if (row.Substring(0, 7) == "return ")
+						return newRow.Substring(7);
 				}
-
-				if ((s.Length & 1) == 1) newRow += s.Last();
-				
-				if (row.Substring(0, 7) == "return ")
-					return newRow.Substring(7);
+				string[] words = newRow.Split(' ');
+				if (words.Length > 2)
+					switch (words[1]) {
+						case "=":
+							break;
+						case "+=":
+							break;
+						case "-=":
+							break;
+					}
 			}
 
 			return default;
 		}
 
+		private static void AddToDictionary(Dictionary<string, string> dictionary, string name, string value)
+		{
+			if (dictionary.ContainsKey(name)) {
+				if (float.TryParse(dictionary[name], out float val)) {
+					if (!float.TryParse(value, out float valIn)) return;
+					dictionary[name] = (val + valIn).ToString();
+					return;
+				}
+
+				dictionary[name] += value;
+			} else
+				dictionary.Add(name, value);
+		}
+
+		private static string RunFunctions(string row)
+		{
+			string newRow = "";
+
+			string functionName           = "";
+			string functionContent        = "";
+			string functionNameOfChild    = "";
+			string functionContentOfChild = "";
+			int    depth                  = 0;
+			foreach (char rowChar in row)
+				switch (rowChar) {
+					case ' ':
+						if (depth == 0) {
+							newRow       += functionName + ' ';
+							functionName =  "";
+						} else if (depth == 1) functionNameOfChild =  "";
+						else functionContentOfChild                += ' ';
+
+						break;
+					case '(':
+						if (depth      == 0) functionContent = "";
+						else if (depth == 1) {
+							functionContentOfChild = "";
+							functionContent        = functionContent.Substring(0, functionNameOfChild.Length - 1);
+						} else functionContentOfChild += '(';
+
+						depth++;
+						break;
+					case ')':
+						depth--;
+						switch (depth) {
+							case 0:
+								newRow       += Dictionaries.Code(functionName).Code.Execute(functionContent);
+								functionName =  "";
+								break;
+							case 1:
+								if (functionContentOfChild.Contains('('))
+									functionContentOfChild = RunFunctions(functionContentOfChild);
+								functionContent += Dictionaries.Code(functionNameOfChild).Code
+								                               .Execute(functionContentOfChild);
+								//functionNameOfChild =  "";
+								break;
+							default:
+								functionContentOfChild += ')';
+								break;
+						}
+
+						break;
+					default:
+						switch (depth) {
+							case 0:
+								functionName += rowChar;
+								break;
+							case 1:
+								functionContent     += rowChar;
+								functionNameOfChild += rowChar;
+								break;
+							default:
+								functionContentOfChild += rowChar;
+								break;
+						}
+
+						break;
+				}
+
+			if (functionName != "") newRow += functionName;
+
+			return newRow;
+		}
 
 		/*
 		 * player.hp++;
@@ -116,19 +198,30 @@ namespace Learning_cards.Scripts.Data.Classes
 							default:
 								continue;
 						}
+
 						Ending:
-						wordsInRow[i - 1] +=  ",";
+						wordsInRow[i - 1] += ",";
 						wordsInRow[i + 1] += ")";
 						wordsInRow.RemoveAt(i);
 						i++;
 					}
 
 					stringBuilder.Append(string.Join(" ", wordsInRow));
-
 				}
 
 				stringBuilder.Append(';');
 			}
+
+			//add space after coma
+			for (int i = 0; i < stringBuilder.Length - 1; i++)
+				if (stringBuilder[i] == ',' && stringBuilder[i + 1] != ' ') {
+					stringBuilder.Insert(i + 1, ' ');
+					i++;
+				}
+
+			//remove ending semicolon
+			while (stringBuilder.Length > 0 && stringBuilder[stringBuilder.Length - 1] == ';')
+				stringBuilder.Remove(stringBuilder.Length - 1, 1);
 
 			_compiledCode = stringBuilder.ToString();
 			_isCompiled   = true;

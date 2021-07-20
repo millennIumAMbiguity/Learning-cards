@@ -13,14 +13,27 @@ namespace Learning_cards.Scripts.UI.Messages
 
 		private void Awake() => _messageHandler = this;
 
-		public static void ShowMessage(string text) => _messageHandler.Message(text);
+		public static void ShowMessage(string text)
+		{
+			//When in the editor, use Debug.Log instead of MessageHandler
+			#if UNITY_EDITOR
+			if (!Application.isPlaying) {
+				string   newText = "";
+				string[] s       = text.Split('<', '>');
+				//remove formatting
+				for (int i = 0; i < s.Length; i++)
+					if ((i & 1) == 0 && s[i] != "")
+						newText += s[i];
+				Debug.Log(newText);
+				return;
+			}
+			#endif
+
+			_messageHandler.Message(text);
+		}
 
 		private void Message(string text)
 		{
-			#if UNITY_EDITOR
-			if (!Application.isPlaying) return;
-			#endif
-
 			GameObject obj = Instantiate(messageBoxPrefab, transform);
 			obj.GetComponentInChildren<TMP_Text>().text = text;
 
