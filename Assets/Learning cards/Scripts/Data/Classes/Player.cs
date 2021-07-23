@@ -6,9 +6,9 @@ namespace Learning_cards.Scripts.Data.Classes
 	{
 		public Dictionary<string, Card>   Cards;
 		public Character                  Character;
-		public int                        HitPointsDelta;
+		public Code                       Code;
 		public string                     Title;
-		public Dictionary<string, string> Variables;
+		public Dictionary<string, string> Variables = new Dictionary<string, string>();
 		public int                        Id { get; set; }
 	}
 }

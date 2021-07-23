@@ -5,7 +5,9 @@ namespace Learning_cards.Scripts.Data.InternalCode
 {
 	public class Add : ICode
 	{
-		public string Execute(string input = null)
+		public string Execute(string input = null) => SExecute(input);
+
+		public static string SExecute(string input = null)
 		{
 			if (input is null) return "0";
 			string[] arguments   = input.Split(',');

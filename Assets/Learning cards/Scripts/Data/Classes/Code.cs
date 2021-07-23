@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -46,32 +47,84 @@ namespace Learning_cards.Scripts.Data.Classes
 						return newRow.Substring(7);
 				}
 				string[] words = newRow.Split(' ');
-				if (words.Length > 2)
-					switch (words[1]) {
-						case "=":
-							break;
-						case "+=":
-							break;
-						case "-=":
-							break;
+				if (words.Length > 2) {
+					string[] target     = words[0].Split('.');
+					string   deltaValue = newRow.Substring(words[0].Length + words[1].Length + 1).Trim();
+					if (target.Length == 1) { //global Variable
+						switch (words[1]) {
+							case "=":
+								Dictionaries.SetToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
+								continue;
+							case "+=":
+								Dictionaries.AddToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
+								continue;
+							case "-=":
+								Dictionaries.SubToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
+								continue;
+						}
+
+						continue;
 					}
+
+					int id = -1;
+					{
+						string[] s = target[0].Split('[');
+						if (s.Length > 1) {
+							id        = int.Parse(s[1].Substring(0, s[1].Length - 1));
+							target[0] = s[0];
+						}
+					}
+					if (id == -1) throw new Exception("was expecting an index");
+
+					if (target[0] == "players") {
+						Player targetPlayer = Dictionaries.Players[id];
+						switch (target[1]) {
+							case "cards":
+								throw new NotImplementedException();
+							case "character":
+								throw new NotImplementedException();
+							case "code":
+								switch (words[1]) {
+									case "=":
+										targetPlayer.Code.SourceCode = deltaValue;
+										continue;
+									case "+=":
+										targetPlayer.Code.SourceCode += deltaValue;
+										continue;
+								}
+
+								continue;
+							case "title":
+								switch (words[1]) {
+									case "=":
+										targetPlayer.Title = deltaValue;
+										continue;
+									case "+=":
+										targetPlayer.Title += deltaValue;
+										continue;
+								}
+
+								continue;
+							default:
+								switch (words[1]) {
+									case "=":
+										Dictionaries.SetToDictionary(targetPlayer.Variables, target[1], deltaValue);
+										continue;
+									case "+=":
+										Dictionaries.AddToDictionary(targetPlayer.Variables, target[1], deltaValue);
+										continue;
+									case "-=":
+										Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
+										continue;
+								}
+
+								continue;
+						}
+					}
+				}
 			}
 
 			return default;
-		}
-
-		private static void AddToDictionary(Dictionary<string, string> dictionary, string name, string value)
-		{
-			if (dictionary.ContainsKey(name)) {
-				if (float.TryParse(dictionary[name], out float val)) {
-					if (!float.TryParse(value, out float valIn)) return;
-					dictionary[name] = (val + valIn).ToString();
-					return;
-				}
-
-				dictionary[name] += value;
-			} else
-				dictionary.Add(name, value);
 		}
 
 		private static string RunFunctions(string row)
@@ -86,19 +139,33 @@ namespace Learning_cards.Scripts.Data.Classes
 			foreach (char rowChar in row)
 				switch (rowChar) {
 					case ' ':
-						if (depth == 0) {
-							newRow       += functionName + ' ';
-							functionName =  "";
-						} else if (depth == 1) functionNameOfChild =  "";
-						else functionContentOfChild                += ' ';
+						switch (depth) {
+							case 0:
+								newRow       += functionName + ' ';
+								functionName =  "";
+								break;
+							case 1:
+								functionNameOfChild = "";
+								break;
+							default:
+								functionContentOfChild += ' ';
+								break;
+						}
 
 						break;
 					case '(':
-						if (depth      == 0) functionContent = "";
-						else if (depth == 1) {
-							functionContentOfChild = "";
-							functionContent        = functionContent.Substring(0, functionNameOfChild.Length - 1);
-						} else functionContentOfChild += '(';
+						switch (depth) {
+							case 0:
+								functionContent = "";
+								break;
+							case 1:
+								functionContentOfChild = "";
+								functionContent        = functionContent.Substring(0, functionNameOfChild.Length - 1);
+								break;
+							default:
+								functionContentOfChild += '(';
+								break;
+						}
 
 						depth++;
 						break;
@@ -110,11 +177,11 @@ namespace Learning_cards.Scripts.Data.Classes
 								functionName =  "";
 								break;
 							case 1:
+								//if function in depth 1 contains function, call RunFunctions()
 								if (functionContentOfChild.Contains('('))
 									functionContentOfChild = RunFunctions(functionContentOfChild);
 								functionContent += Dictionaries.Code(functionNameOfChild).Code
 								                               .Execute(functionContentOfChild);
-								//functionNameOfChild =  "";
 								break;
 							default:
 								functionContentOfChild += ')';
@@ -143,13 +210,6 @@ namespace Learning_cards.Scripts.Data.Classes
 
 			return newRow;
 		}
-
-		/*
-		 * player.hp++;
-		 * target.hp += 1;
-		 * players[0].deck += this as card;
-		 * player.deck += GetCard(myCard);
-		 */
 
 		public void Compile()
 		{

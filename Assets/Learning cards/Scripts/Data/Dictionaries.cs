@@ -18,7 +18,7 @@ namespace Learning_cards.Scripts.Data
 		private static Dictionary<string, Character> DCharacters;
 		private static Dictionary<string, Card>      DCards;
 		private static Dictionary<string, Function>  DCode;
-		private static Dictionary<string, string>    DGlobalVariable;
+		public static  Dictionary<string, string>    DGlobalVariables;
 
 		public static void Load()
 		{
@@ -28,10 +28,10 @@ namespace Learning_cards.Scripts.Data
 			LCards     = new List<Card>();
 			LCode      = new List<ICode>();
 
-			DCharacters     = new Dictionary<string, Character>();
-			DCards          = new Dictionary<string, Card>();
-			DCode           = new Dictionary<string, Function>();
-			DGlobalVariable = new Dictionary<string, string>();
+			DCharacters      = new Dictionary<string, Character>();
+			DCards           = new Dictionary<string, Card>();
+			DCode            = new Dictionary<string, Function>();
+			DGlobalVariables = new Dictionary<string, string>();
 
 #region AddInternalCode
 
@@ -67,6 +67,45 @@ namespace Learning_cards.Scripts.Data
 		public static ICode    Code(int    id)   => LCode[id];
 		public static Function Code(string name) => DCode[name];
 
-		public static string GlobalVariable(string name) => DGlobalVariable[name];
+		public static string GlobalVariables(string name) => DGlobalVariables[name];
+
+
+#region staticFuntions
+
+		public static void AddToDictionary(Dictionary<string, string> dictionary, string name, string value)
+		{
+			if (dictionary.ContainsKey(name)) {
+				if (float.TryParse(dictionary[name], out float val)) {
+					if (!float.TryParse(value, out float valIn)) return;
+					dictionary[name] = (val + valIn).ToString();
+					return;
+				}
+
+				dictionary[name] += value;
+			} else
+				dictionary.Add(name, value);
+		}
+
+		public static void SubToDictionary(Dictionary<string, string> dictionary, string name, string value)
+		{
+			if (dictionary.ContainsKey(name)) {
+				if (float.TryParse(dictionary[name], out float val)) {
+					if (!float.TryParse(value, out float valIn)) return;
+					dictionary[name] = (val - valIn).ToString();
+					return;
+				}
+
+				dictionary[name] = value;
+			} else
+				dictionary.Add(name, value);
+		}
+
+		public static void SetToDictionary(Dictionary<string, string> dictionary, string name, string value)
+		{
+			if (dictionary.ContainsKey(name)) dictionary[name] = value;
+			else dictionary.Add(name, value);
+		}
+
+#endregion
 	}
 }
