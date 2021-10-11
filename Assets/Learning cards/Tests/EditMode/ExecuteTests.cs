@@ -49,6 +49,17 @@ namespace Learning_cards.Tests.EditMode
 		}
 
 		[Test]
+		public void ReturnBreak()
+		{
+			Dictionaries.Load();
+			new Code(
+				"my_var = 5;" +
+				"return;" +
+				"my_var += 5;").Execute();
+			Assert.AreEqual("5", Dictionaries.GlobalVariables("my_var"));
+		}
+
+		[Test]
 		public void ChangePlayerTitle()
 		{
 			Dictionaries.Players = new List<Player>(new[] {new Player()});
@@ -64,6 +75,29 @@ namespace Learning_cards.Tests.EditMode
 				"player.hp = 20;" +
 				"player.hp -= 5;").Execute();
 			Assert.AreEqual("15", Dictionaries.Players[0].Variables["hp"]);
+		}
+
+		[Test]
+		public void SetPlayerHpFromGlobalVar()
+		{
+			Dictionaries.Load();
+			Dictionaries.Players = new List<Player>(new[] {new Player()});
+			new Code(
+				"player.hp = 20;" +
+				"my_var = 5;" +
+				"player.hp -= $my_var;").Execute();
+			Assert.AreEqual("15", Dictionaries.Players[0].Variables["hp"]);
+		}
+
+		[Test]
+		public void SetGlobalVarFromPlayerHp()
+		{
+			Dictionaries.Load();
+			Dictionaries.Players = new List<Player>(new[] {new Player()});
+			new Code(
+				"player.hp = 20;" +
+				"my_var = $player.hp").Execute();
+			Assert.AreEqual("20", Dictionaries.DGlobalVariables["my_var"]);
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace Learning_cards.Scripts.UI.Messages
 			int baseOffset = offset % messageContainmentSize - messageContainmentSize / 2;
 			obj.transform.position += new Vector3(
 				(baseOffset + offset / messageContainmentSize) * messageOffset,
-				-baseOffset                                    * messageOffset);
+				-baseOffset * messageOffset);
 		}
 	}
 }

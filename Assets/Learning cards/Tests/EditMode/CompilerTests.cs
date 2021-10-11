@@ -5,20 +5,17 @@ namespace Learning_cards.Tests.EditMode
 {
 	public class CompilerTests
 	{
-		[Test] public void CompileNull()               => Assert.AreEqual("",       new Code().CompiledCode);
-		[Test] public void CompileEmpty()              => Assert.AreEqual("",       new Code("").CompiledCode);
-		[Test] public void CompileBackslashN()         => Assert.AreEqual("",       new Code("\n").CompiledCode);
-		[Test] public void CompileSemicolon()          => Assert.AreEqual("",       new Code(";").CompiledCode);
 		[Test] public void CompileAddSpaceAfterColon() => Assert.AreEqual(", , , ", new Code(", ,,").CompiledCode);
 
 		[Test]
-		public void CompilePlusPlus() => Assert.AreEqual(
-			"players[0].hp += 1",
-			new Code("player.hp++;").CompiledCode);
+		public void CompileReturnReformatting() => Assert.AreEqual("return NaN", new Code("return;").CompiledCode);
+	}
 
-		[Test]
-		public void CompileAdd() => Assert.AreEqual(
-			"players[0].hp += Add(1, 1)",
-			new Code("player.hp += 1 + 1;").CompiledCode);
+	public class CompilerNullTests
+	{
+		[Test] public void CompileNull()       => Assert.AreEqual("", new Code().CompiledCode);
+		[Test] public void CompileEmpty()      => Assert.AreEqual("", new Code("").CompiledCode);
+		[Test] public void CompileBackslashN() => Assert.AreEqual("", new Code("\n").CompiledCode);
+		[Test] public void CompileSemicolon()  => Assert.AreEqual("", new Code(";").CompiledCode);
 	}
 }

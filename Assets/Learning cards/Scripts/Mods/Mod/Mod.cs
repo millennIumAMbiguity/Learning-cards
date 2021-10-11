@@ -10,6 +10,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 	{
 		public Mod(string path)
 		{
+			if (path is null) return;
 			var json = JsonUtility.FromJson<JsonModData>(File.ReadAllText($"{path}\\version.json"));
 			Path    = path;
 			Title   = json.title;
@@ -41,12 +42,12 @@ namespace Learning_cards.Scripts.Mods.Mod
 		public void GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list)
 		{
 			if (!Content.HasFlag(ModContent.Functions) || PlayerPrefs.GetInt(Title + ".Functions", 1) == 0) return;
-			string[] cards = Directory.GetFiles(Path + "\\Functions");
+			string[] functions = Directory.GetFiles(Path + "\\Functions");
 
-			foreach (string card in cards) {
-				string title = card.Split('\\').Last().Split('.')[0];
+			foreach (string function in functions) {
+				string title = function.Split('\\').Last().Split('.')[0];
 				title = title.First().ToString().ToUpper() + title.Substring(1);
-				var f = new Function {Code = new Code(File.ReadAllText(card)), Id = list.Count};
+				var f = new Function {Code = new Code(File.ReadAllText(function)), Id = list.Count};
 				list.Add(f.Code);
 				dir.Add(title, f);
 			}

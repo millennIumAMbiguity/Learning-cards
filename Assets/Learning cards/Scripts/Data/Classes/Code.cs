@@ -39,92 +39,141 @@ namespace Learning_cards.Scripts.Data.Classes
 
 			foreach (string row in rows) {
 				//run external functions
-				string newRow = "";
-				{
-					newRow = RunFunctions(row);
+				string newRow = RunFunctions(row);
+				//check for return
+				if (row.Substring(0, 7) == "return ")
+					return newRow.Substring(7);
 
-					if (row.Substring(0, 7) == "return ")
-						return newRow.Substring(7);
-				}
-				string[] words = newRow.Split(' ');
-				if (words.Length > 2) {
-					string[] target     = words[0].Split('.');
-					string   deltaValue = newRow.Substring(words[0].Length + words[1].Length + 1).Trim();
-					if (target.Length == 1) { //global Variable
-						switch (words[1]) {
-							case "=":
-								Dictionaries.SetToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
-								continue;
-							case "+=":
-								Dictionaries.AddToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
-								continue;
-							case "-=":
-								Dictionaries.SubToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
-								continue;
-						}
-
-						continue;
-					}
-
-					int id = -1;
-					{
-						string[] s = target[0].Split('[');
-						if (s.Length > 1) {
-							id        = int.Parse(s[1].Substring(0, s[1].Length - 1));
-							target[0] = s[0];
-						}
-					}
-					if (id == -1) throw new Exception("was expecting an index");
-
-					if (target[0] == "players") {
-						Player targetPlayer = Dictionaries.Players[id];
-						switch (target[1]) {
-							case "cards":
-								throw new NotImplementedException();
-							case "character":
-								throw new NotImplementedException();
-							case "code":
-								switch (words[1]) {
-									case "=":
-										targetPlayer.Code.SourceCode = deltaValue;
-										continue;
-									case "+=":
-										targetPlayer.Code.SourceCode += deltaValue;
-										continue;
-								}
-
-								continue;
-							case "title":
-								switch (words[1]) {
-									case "=":
-										targetPlayer.Title = deltaValue;
-										continue;
-									case "+=":
-										targetPlayer.Title += deltaValue;
-										continue;
-								}
-
-								continue;
-							default:
-								switch (words[1]) {
-									case "=":
-										Dictionaries.SetToDictionary(targetPlayer.Variables, target[1], deltaValue);
-										continue;
-									case "+=":
-										Dictionaries.AddToDictionary(targetPlayer.Variables, target[1], deltaValue);
-										continue;
-									case "-=":
-										Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
-										continue;
-								}
-
-								continue;
-						}
-					}
-				}
+				SetVar(newRow);
 			}
 
 			return default;
+		}
+
+		private static string GetVars(string s)
+		{
+			string[] arr                                                = s.Split(' ');
+			for (int index = 0; index < arr.Length; index++) arr[index] = GetVar(arr[index]);
+			return string.Join(" ", arr);
+		}
+
+		private static string GetVar(string s)
+		{
+			if (s[0] != '$') return s;
+			s = s.Substring(1);
+			string[] spit;
+
+			//get global variable
+			if ((spit = s.Split('.')).Length <= 1)
+				return Dictionaries.GlobalVariables(s);
+
+			//get object variable
+			switch (GetId(spit[0], out int id)) {
+				case "players": {
+					Player targetPlayer = Dictionaries.Players[id];
+					switch (spit[1]) {
+						case "cards":
+							throw new NotImplementedException();
+						case "character":
+							throw new NotImplementedException();
+						case "code":
+							return targetPlayer.Code._sourceCode;
+						case "title":
+							return targetPlayer.Title;
+						default:
+							return targetPlayer.Variables[spit[1]];
+					}
+				}
+				default: throw new Exception("Specified type not found.");
+			}
+		}
+
+		private static void SetVar(string newRow)
+		{
+			string[] words = newRow.Split(' ');
+			if (words.Length <= 2) return;
+			string[] target     = words[0].Split('.');
+			string   deltaValue = GetVars(newRow.Substring(words[0].Length + words[1].Length + 1).Trim());
+
+			//set Global variable
+			if (target.Length == 1)
+				switch (words[1]) {
+					case "=":
+						Dictionaries.SetToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
+						return;
+					case "+=":
+						Dictionaries.AddToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
+						return;
+					case "-=":
+						Dictionaries.SubToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
+						return;
+
+					default: throw new Exception(words[1] + " was not recognized as a valid action.");
+				}
+
+
+			//set variable of object
+			switch (GetId(target[0], out int id)) {
+				case "players": {
+					Player targetPlayer = Dictionaries.Players[id];
+					switch (target[1]) {
+						case "cards":
+							throw new NotImplementedException();
+						case "character":
+							throw new NotImplementedException();
+						case "code":
+							switch (words[1]) {
+								case "=":
+									targetPlayer.Code.SourceCode = deltaValue;
+									return;
+								case "+=":
+									targetPlayer.Code.SourceCode += deltaValue;
+									return;
+							}
+
+							throw new Exception(words[1] + " was not recognized as a valid action.");
+						case "title":
+							switch (words[1]) {
+								case "=":
+									targetPlayer.Title = deltaValue;
+									return;
+								case "+=":
+									targetPlayer.Title += deltaValue;
+									return;
+							}
+
+							throw new Exception(words[1] + " was not recognized as a valid action.");
+						default:
+							switch (words[1]) {
+								case "=":
+									Dictionaries.SetToDictionary(targetPlayer.Variables, target[1], deltaValue);
+									return;
+								case "+=":
+									Dictionaries.AddToDictionary(targetPlayer.Variables, target[1], deltaValue);
+									return;
+								case "-=":
+									Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
+									return;
+							}
+
+							throw new Exception(words[1] + " was not recognized as a valid action.");
+					}
+				}
+				default: throw new Exception("Specified type not found.");
+			}
+		}
+
+		private static string GetId(string spit, out int id)
+		{
+			id = -1;
+			string[] splitIdSplit = spit.Split('[');
+			if (splitIdSplit.Length > 1) {
+				id   = int.Parse(splitIdSplit[1].Substring(0, splitIdSplit[1].Length - 1));
+				spit = splitIdSplit[0];
+			}
+
+			if (id == -1) throw new Exception("was expecting an index");
+			return spit;
 		}
 
 		private static string RunFunctions(string row)
@@ -173,7 +222,7 @@ namespace Learning_cards.Scripts.Data.Classes
 						depth--;
 						switch (depth) {
 							case 0:
-								newRow       += Dictionaries.Code(functionName).Code.Execute(functionContent);
+								newRow       += Dictionaries.Code(functionName).Code.Execute(GetVar(functionContent));
 								functionName =  "";
 								break;
 							case 1:
@@ -181,7 +230,7 @@ namespace Learning_cards.Scripts.Data.Classes
 								if (functionContentOfChild.Contains('('))
 									functionContentOfChild = RunFunctions(functionContentOfChild);
 								functionContent += Dictionaries.Code(functionNameOfChild).Code
-								                               .Execute(functionContentOfChild);
+															   .Execute(GetVar(functionContentOfChild));
 								break;
 							default:
 								functionContentOfChild += ')';
@@ -216,7 +265,7 @@ namespace Learning_cards.Scripts.Data.Classes
 			_compiledCode = "";
 			if (SourceCode is null) return;
 			var      stringBuilder = new StringBuilder("");
-			string[] rows          = SourceCode.Split(';');
+			string[] rows          = SourceCode.Replace("return;", "return NaN;").Split(';');
 
 			foreach (string row in rows) {
 				string trimmedRow = row.Trim();

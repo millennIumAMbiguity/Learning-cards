@@ -35,8 +35,8 @@ namespace Learning_cards.Scripts.Data
 
 #region AddInternalCode
 
-			DCode.Add("Add",      new Function {Code = new Add()});
-			DCode.Add("Divide",   new Function {Code = new Divide()});
+			DCode.Add("Add", new Function {Code      = new Add()});
+			DCode.Add("Divide", new Function {Code   = new Divide()});
 			DCode.Add("Multiply", new Function {Code = new Multiply()});
 			DCode.Add("Subtract", new Function {Code = new Subtract()});
 
