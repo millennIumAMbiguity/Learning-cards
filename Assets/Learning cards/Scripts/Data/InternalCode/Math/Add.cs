@@ -1,7 +1,7 @@
-﻿using Learning_cards.Scripts.Data.Classes;
-using Learning_cards.Scripts.UI.Messages;
+﻿using System.Linq;
+using Learning_cards.Scripts.Data.Classes;
 
-namespace Learning_cards.Scripts.Data.InternalCode
+namespace Learning_cards.Scripts.Data.InternalCode.Math
 {
 	public class Add : ICode
 	{
@@ -13,10 +13,11 @@ namespace Learning_cards.Scripts.Data.InternalCode
 			string[] arguments   = input.Split(',');
 			float    returnValue = 0;
 			foreach (string argument in arguments)
+				//add current argument to the final result
 				if (float.TryParse(argument, out float result)) returnValue += result;
-				else
-					MessageHandler.ShowMessage(
-						$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nFailed to convert {argument} to type float.\nAdd( {input} )");
+				//input contains string, return a string containing all strings.
+				else return arguments.Aggregate("", (current, arg) => current + arg.Trim());
+				
 
 			return returnValue.ToString();
 		}

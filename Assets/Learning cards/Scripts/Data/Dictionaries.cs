@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Learning_cards.Scripts.Data.Classes;
 using Learning_cards.Scripts.Data.InternalCode;
+using Learning_cards.Scripts.Data.InternalCode.Comparators;
+using Learning_cards.Scripts.Data.InternalCode.Math;
 using Learning_cards.Scripts.Mods;
 using Learning_cards.Scripts.Mods.Mod;
 
@@ -39,6 +41,13 @@ namespace Learning_cards.Scripts.Data
 			DCode.Add("Divide", new Function {Code   = new Divide()});
 			DCode.Add("Multiply", new Function {Code = new Multiply()});
 			DCode.Add("Subtract", new Function {Code = new Subtract()});
+
+			DCode.Add("Equals", new Function {Code         = new Equals()});
+			DCode.Add("NotEquals", new Function {Code      = new NotEquals()});
+			DCode.Add("Greater", new Function {Code        = new Greater()});
+			DCode.Add("GreaterOrEqual", new Function {Code = new GreaterOrEqual()});
+			DCode.Add("Less", new Function {Code           = new Less()});
+			DCode.Add("LessOrEqual", new Function {Code    = new LessOrEqual()});
 
 			//Add internal code to LCode
 			foreach (var code in DCode)

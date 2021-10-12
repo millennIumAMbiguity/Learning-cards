@@ -71,18 +71,13 @@ namespace Learning_cards.Scripts.Data.Classes
 			switch (GetId(spit[0], out int id)) {
 				case "players": {
 					Player targetPlayer = Dictionaries.Players[id];
-					switch (spit[1]) {
-						case "cards":
-							throw new NotImplementedException();
-						case "character":
-							throw new NotImplementedException();
-						case "code":
-							return targetPlayer.Code._sourceCode;
-						case "title":
-							return targetPlayer.Title;
-						default:
-							return targetPlayer.Variables[spit[1]];
-					}
+					return spit[1] switch {
+						"cards"     => throw new NotImplementedException(),
+						"character" => throw new NotImplementedException(),
+						"code"      => targetPlayer.Code._sourceCode,
+						"title"     => targetPlayer.Title,
+						_           => targetPlayer.Variables[spit[1]]
+					};
 				}
 				default: throw new Exception("Specified type not found.");
 			}
@@ -129,9 +124,9 @@ namespace Learning_cards.Scripts.Data.Classes
 								case "+=":
 									targetPlayer.Code.SourceCode += deltaValue;
 									return;
+								default: 
+									throw new Exception(words[1] + " was not recognized as a valid action.");
 							}
-
-							throw new Exception(words[1] + " was not recognized as a valid action.");
 						case "title":
 							switch (words[1]) {
 								case "=":
@@ -140,9 +135,9 @@ namespace Learning_cards.Scripts.Data.Classes
 								case "+=":
 									targetPlayer.Title += deltaValue;
 									return;
+								default: 
+									throw new Exception(words[1] + " was not recognized as a valid action.");
 							}
-
-							throw new Exception(words[1] + " was not recognized as a valid action.");
 						default:
 							switch (words[1]) {
 								case "=":
@@ -154,9 +149,9 @@ namespace Learning_cards.Scripts.Data.Classes
 								case "-=":
 									Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
 									return;
+								default: 
+									throw new Exception(words[1] + " was not recognized as a valid action.");
 							}
-
-							throw new Exception(words[1] + " was not recognized as a valid action.");
 					}
 				}
 				default: throw new Exception("Specified type not found.");

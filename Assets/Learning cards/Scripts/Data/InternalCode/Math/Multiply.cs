@@ -1,7 +1,7 @@
 ﻿using Learning_cards.Scripts.Data.Classes;
 using Learning_cards.Scripts.UI.Messages;
 
-namespace Learning_cards.Scripts.Data.InternalCode
+namespace Learning_cards.Scripts.Data.InternalCode.Math
 {
 	public class Multiply : ICode
 	{
