@@ -32,7 +32,7 @@ namespace Learning_cards.Scripts.Mods
 
 			Debug.Log(
 				$"ActiveMods: {ActiveMods.Count}\nInactiveMods: {InactiveMods.Count}\ndefaultContent: {defaultContent.Length}");
-			MessageHandler.ShowMessage("Hello World!");
+			//MessageHandler.ShowMessage("Hello World!");
 		}
 	}
 }

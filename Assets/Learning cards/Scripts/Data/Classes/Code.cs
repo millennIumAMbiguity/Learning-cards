@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using Learning_cards.Scripts.UI.Messages;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
@@ -31,20 +33,55 @@ namespace Learning_cards.Scripts.Data.Classes
 
 		public string Execute(string input = null)
 		{
+			int loopCount = 0;
 			//return CompiledCode;
 			string compiledCode             = CompiledCode;
 			if (input != null) compiledCode = compiledCode.Replace("?", input);
 
 			string[] rows = compiledCode.Split(';');
 
-			foreach (string row in rows) {
+			for (int index = 0; index < rows.Length; index++) {
 				//run external functions
-				string newRow = RunFunctions(row);
-				//check for return
-				if (row.Substring(0, 7) == "return ")
-					return newRow.Substring(7);
+				string newRow = RunFunctions(rows[index]);
 
-				SetVar(newRow);
+				string[] words = newRow.Split(' ');
+				switch (words[0]) {
+					case "":
+						continue;
+					case "return": 
+						return newRow.Substring(7);
+					case "goto": {
+						if (loopCount++ > 1_000_000) return "NaN";
+						string target = newRow.Substring(5);
+						string symbol = target.Substring(0, 1);
+						switch (symbol) {
+							case "+": {
+								if (!int.TryParse(target.Substring(1), out int res)) goto gotoIsNotNumber;
+								index += res - 1;
+								continue;
+							}
+							case "-": {
+								if (!int.TryParse(target.Substring(1), out int res)) goto gotoIsNotNumber;
+								index -= res + 1;
+								continue;
+							}
+							default: {
+								if (!int.TryParse(target, out int res)) goto gotoIsNotNumber;
+								index = res - 2;
+								continue;
+							}
+
+						}
+						gotoIsNotNumber:
+						MessageHandler.ShowMessage(
+							$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{target}\" not recognised as a goto point.");
+						return "NaN";
+						continue;
+					}
+					default: 
+						SetVar(newRow);
+						break;
+				}
 			}
 
 			return default;
@@ -79,14 +116,18 @@ namespace Learning_cards.Scripts.Data.Classes
 						_           => targetPlayer.Variables[spit[1]]
 					};
 				}
-				default: throw new Exception("Specified type not found.");
+				default:
+					MessageHandler.ShowMessage(
+						$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
+					return "NaN";
 			}
 		}
 
-		private static void SetVar(string newRow)
+		private static void SetVar(string newRow) => SetVar(newRow, newRow.Split(' '));
+
+		private static void SetVar(string newRow, IReadOnlyList<string> words)
 		{
-			string[] words = newRow.Split(' ');
-			if (words.Length <= 2) return;
+			if (words.Count <= 2) return;
 			string[] target     = words[0].Split('.');
 			string   deltaValue = GetVars(newRow.Substring(words[0].Length + words[1].Length + 1).Trim());
 
@@ -103,7 +144,10 @@ namespace Learning_cards.Scripts.Data.Classes
 						Dictionaries.SubToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
 						return;
 
-					default: throw new Exception(words[1] + " was not recognized as a valid action.");
+					default:
+						MessageHandler.ShowMessage(
+							$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
+						return;
 				}
 
 
@@ -125,7 +169,9 @@ namespace Learning_cards.Scripts.Data.Classes
 									targetPlayer.Code.SourceCode += deltaValue;
 									return;
 								default: 
-									throw new Exception(words[1] + " was not recognized as a valid action.");
+									MessageHandler.ShowMessage(
+										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
+									return;
 							}
 						case "title":
 							switch (words[1]) {
@@ -136,7 +182,9 @@ namespace Learning_cards.Scripts.Data.Classes
 									targetPlayer.Title += deltaValue;
 									return;
 								default: 
-									throw new Exception(words[1] + " was not recognized as a valid action.");
+									MessageHandler.ShowMessage(
+										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
+									return;
 							}
 						default:
 							switch (words[1]) {
@@ -150,11 +198,16 @@ namespace Learning_cards.Scripts.Data.Classes
 									Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
 									return;
 								default: 
-									throw new Exception(words[1] + " was not recognized as a valid action.");
+									MessageHandler.ShowMessage(
+										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
+									return;
 							}
 					}
 				}
-				default: throw new Exception("Specified type not found.");
+				default: 
+					MessageHandler.ShowMessage(
+						$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
+					return;
 			}
 		}
 
@@ -167,7 +220,11 @@ namespace Learning_cards.Scripts.Data.Classes
 				spit = splitIdSplit[0];
 			}
 
-			if (id == -1) throw new Exception("was expecting an index");
+			if (id == -1) {
+				MessageHandler.ShowMessage(
+					$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nIndex expected.");
+				return "NaN";
+			}
 			return spit;
 		}
 

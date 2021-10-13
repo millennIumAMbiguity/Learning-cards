@@ -18,13 +18,21 @@ namespace Learning_cards.Scripts.UI.Messages
 			//When in the editor, use Debug.Log instead of MessageHandler
 			#if UNITY_EDITOR
 			if (!Application.isPlaying) {
+				bool     isError = false;
 				string   newText = "";
 				string[] s       = text.Split('<', '>');
 				//remove formatting
-				for (int i = 0; i < s.Length; i++)
-					if ((i & 1) == 0 && s[i] != "")
+				for (int i = 0; i < s.Length; i++) {
+					if ((i & 1) == 0) {
+						if (s[i] == "") continue;
+						if (!isError && s[i].Substring(0,6).ToUpper() == "ERROR:") isError = true;
 						newText += s[i];
-				Debug.Log(newText);
+					} else if (s[i] != "" && s[i].Split('=')[0] != "size") {
+						newText += '<'+s[i]+'>';
+					}
+				}
+				if (isError) Debug.LogError(newText);
+				else Debug.Log(newText);
 				return;
 			}
 			#endif

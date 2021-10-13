@@ -2,6 +2,7 @@
 using Learning_cards.Scripts.Data;
 using Learning_cards.Scripts.Data.Classes;
 using Learning_cards.Scripts.Data.InternalCode;
+using Learning_cards.Scripts.UI.Messages;
 using NUnit.Framework;
 
 namespace Learning_cards.Tests.EditMode
@@ -82,6 +83,41 @@ namespace Learning_cards.Tests.EditMode
 				"player.hp = 20;" +
 				"my_var = $player.hp").Execute();
 			Assert.AreEqual(20, float.Parse(Dictionaries.DGlobalVariables["my_var"]));
+		}
+
+		[Test, MaxTime(100)]
+		public void GotoTest()
+		{
+			Dictionaries.Load();
+			new Code(
+				"my_var = 5;" +
+				"goto 4;"+
+				"my_var = 10;" + 
+				"return;").Execute();
+			Assert.AreEqual(5, float.Parse(Dictionaries.DGlobalVariables["my_var"]));
+		}
+		[Test, MaxTime(100)]
+		public void GotoRelativePositiveTest()
+		{
+			Dictionaries.Load();
+			new Code(
+				"my_var = 5;" +
+				"goto +2;"+
+				"my_var = 10;" + 
+				"return;").Execute();
+			Assert.AreEqual(5, float.Parse(Dictionaries.DGlobalVariables["my_var"]));
+		}
+		[Test, MaxTime(100)]
+		public void GotoRelativeNegativTest()
+		{
+			Dictionaries.Load();
+			new Code(
+				"goto 3;" + 
+				"return;" +
+				"my_var = 5;" +
+				"goto -2;" + 
+				"my_var = 10;").Execute();
+			Assert.AreEqual(5, float.Parse(Dictionaries.DGlobalVariables["my_var"]));
 		}
 	}
 }
