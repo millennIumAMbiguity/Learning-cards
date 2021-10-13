@@ -51,7 +51,11 @@ namespace Learning_cards.Scripts.Data.Classes
 					case "return": 
 						return newRow.Substring(7);
 					case "goto": {
-						if (loopCount++ > 1_000_000) return "NaN";
+						if (loopCount++ > 1_000_000) {
+							MessageHandler.ShowMessage(
+								$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\ngoto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
+							return "NaN";
+						}
 						string target = newRow.Substring(5);
 						string symbol = target.Substring(0, 1);
 						switch (symbol) {
@@ -76,7 +80,6 @@ namespace Learning_cards.Scripts.Data.Classes
 						MessageHandler.ShowMessage(
 							$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{target}\" not recognised as a goto point.");
 						return "NaN";
-						continue;
 					}
 					default: 
 						SetVar(newRow);
