@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
 using Learning_cards.Scripts.UI.Messages;
 
 namespace Learning_cards.Scripts.Data.Classes
@@ -47,15 +46,18 @@ namespace Learning_cards.Scripts.Data.Classes
 				string[] words = newRow.Split(' ');
 				switch (words[0]) {
 					case "":
+					case "NaN":
 						continue;
-					case "return": 
+					case "return":
 						return newRow.Substring(7);
 					case "goto": {
+						//protects against indefinite loops.
 						if (loopCount++ > 1_000_000) {
 							MessageHandler.ShowMessage(
-								$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\ngoto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
+								"<size=+6><b><color=red>ERROR:</color></b><size=-6>\ngoto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
 							return "NaN";
 						}
+
 						string target = newRow.Substring(5);
 						string symbol = target.Substring(0, 1);
 						switch (symbol) {
@@ -74,14 +76,14 @@ namespace Learning_cards.Scripts.Data.Classes
 								index = res - 2;
 								continue;
 							}
-
 						}
+
 						gotoIsNotNumber:
 						MessageHandler.ShowMessage(
 							$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{target}\" not recognised as a goto point.");
 						return "NaN";
 					}
-					default: 
+					default:
 						SetVar(newRow);
 						break;
 				}
@@ -121,7 +123,7 @@ namespace Learning_cards.Scripts.Data.Classes
 				}
 				default:
 					MessageHandler.ShowMessage(
-						$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
+						"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
 					return "NaN";
 			}
 		}
@@ -171,7 +173,7 @@ namespace Learning_cards.Scripts.Data.Classes
 								case "+=":
 									targetPlayer.Code.SourceCode += deltaValue;
 									return;
-								default: 
+								default:
 									MessageHandler.ShowMessage(
 										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
 									return;
@@ -184,7 +186,7 @@ namespace Learning_cards.Scripts.Data.Classes
 								case "+=":
 									targetPlayer.Title += deltaValue;
 									return;
-								default: 
+								default:
 									MessageHandler.ShowMessage(
 										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
 									return;
@@ -200,16 +202,16 @@ namespace Learning_cards.Scripts.Data.Classes
 								case "-=":
 									Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
 									return;
-								default: 
+								default:
 									MessageHandler.ShowMessage(
 										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
 									return;
 							}
 					}
 				}
-				default: 
+				default:
 					MessageHandler.ShowMessage(
-						$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
+						"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
 					return;
 			}
 		}
@@ -225,9 +227,10 @@ namespace Learning_cards.Scripts.Data.Classes
 
 			if (id == -1) {
 				MessageHandler.ShowMessage(
-					$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nIndex expected.");
+					"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nIndex expected.");
 				return "NaN";
 			}
+
 			return spit;
 		}
 
@@ -249,7 +252,8 @@ namespace Learning_cards.Scripts.Data.Classes
 								functionName =  "";
 								break;
 							case 1:
-								functionNameOfChild = "";
+								functionNameOfChild =  "";
+								functionContent     += ' ';
 								break;
 							default:
 								functionContentOfChild += ' ';
@@ -325,7 +329,8 @@ namespace Learning_cards.Scripts.Data.Classes
 			foreach (string row in rows) {
 				string trimmedRow = row.Trim();
 				if (trimmedRow == "") continue;
-				trimmedRow = trimmedRow.Replace("player.", "players[0].").Replace("opponent.", "players[1]");
+				trimmedRow = trimmedRow.Replace("player.", "players[0].").Replace("opponent.", "players[1]")
+									   .Replace(" (", "(").Replace("if(", "If(");
 				var wordsInRow = new List<string>(trimmedRow.Split(' '));
 				if (wordsInRow.Count == 1) {
 					if (trimmedRow.Length > 2) {

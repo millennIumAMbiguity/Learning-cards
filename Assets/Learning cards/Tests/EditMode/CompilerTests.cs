@@ -9,6 +9,11 @@ namespace Learning_cards.Tests.EditMode
 
 		[Test]
 		public void CompileReturnReformatting() => Assert.AreEqual("return NaN", new Code("return;").CompiledCode);
+
+		[Test]
+		public void CompileSpaceAfterFunction() => Assert.AreEqual("myFunc()", new Code("myFunc ();").CompiledCode);
+
+		[Test] public void CompilerRenameIf() => Assert.AreEqual("If()", new Code("if();").CompiledCode);
 	}
 
 	public class CompilerNullTests

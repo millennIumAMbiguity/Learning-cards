@@ -8,7 +8,7 @@ namespace Learning_cards.Tests.EditMode
 	public class ExecuteMathTests
 	{
 		[Test] public void Add() => Assert.AreEqual(2, float.Parse(new Add().Execute("1, 1")));
-		
+
 		[Test] public void AddString() => Assert.AreEqual("11a", new Add().Execute("1, 1a"));
 
 		[Test]

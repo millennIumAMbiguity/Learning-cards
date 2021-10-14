@@ -22,15 +22,13 @@ namespace Learning_cards.Scripts.UI.Messages
 				string   newText = "";
 				string[] s       = text.Split('<', '>');
 				//remove formatting
-				for (int i = 0; i < s.Length; i++) {
+				for (int i = 0; i < s.Length; i++)
 					if ((i & 1) == 0) {
 						if (s[i] == "") continue;
-						if (!isError && s[i].Substring(0,6).ToUpper() == "ERROR:") isError = true;
+						if (!isError && s[i].Substring(0, 6).ToUpper() == "ERROR:") isError = true;
 						newText += s[i];
-					} else if (s[i] != "" && s[i].Split('=')[0] != "size") {
-						newText += '<'+s[i]+'>';
-					}
-				}
+					} else if (s[i] != "" && s[i].Split('=')[0] != "size") newText += '<' + s[i] + '>';
+
 				if (isError) Debug.LogError(newText);
 				else Debug.Log(newText);
 				return;

@@ -17,7 +17,7 @@ namespace Learning_cards.Scripts.Data.InternalCode.Math
 				if (float.TryParse(argument, out float result)) returnValue += result;
 				//input contains string, return a string containing all strings.
 				else return arguments.Aggregate("", (current, arg) => current + arg.Trim());
-				
+
 
 			return returnValue.ToString();
 		}
