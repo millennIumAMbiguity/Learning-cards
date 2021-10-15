@@ -14,6 +14,10 @@ namespace Learning_cards.Tests.EditMode
 		public void CompileSpaceAfterFunction() => Assert.AreEqual("myFunc()", new Code("myFunc ();").CompiledCode);
 
 		[Test] public void CompilerRenameIf() => Assert.AreEqual("If()", new Code("if();").CompiledCode);
+
+		[Test]
+		public void GotoPointerTest() => Assert.AreEqual(
+			"Goto 2;return NaN", new Code("Goto point1;point1: return;").CompiledCode);
 	}
 
 	public class CompilerNullTests

@@ -7,6 +7,8 @@ namespace Learning_cards.Scripts.Data.Classes
 	{
 		public void Compile()
 		{
+			var jumpPoints = new Dictionary<string, int>();
+			int newRowId   = 1;
 			_compiledCode = "";
 			if (SourceCode is null) return;
 			var      stringBuilder = new StringBuilder("");
@@ -18,6 +20,14 @@ namespace Learning_cards.Scripts.Data.Classes
 				trimmedRow = trimmedRow.Replace("player.", "players[0].").Replace("opponent.", "players[1]")
 									   .Replace(" (", "(").Replace("if(", "If(");
 				var wordsInRow = new List<string>(trimmedRow.Split(' '));
+
+				//Collect jump points
+				if (wordsInRow[0][wordsInRow[0].Length - 1] == ':') {
+					jumpPoints.Add(wordsInRow[0].Substring(0, wordsInRow[0].Length - 1), newRowId);
+					if (wordsInRow.Count < 2) continue;
+					wordsInRow.RemoveAt(0);
+				}
+
 				if (wordsInRow.Count == 1) {
 					if (trimmedRow.Length > 2) {
 						string last2 = trimmedRow.Substring(trimmedRow.Length - 2);
@@ -25,30 +35,33 @@ namespace Learning_cards.Scripts.Data.Classes
 							case "++":
 								stringBuilder.Append(trimmedRow.Substring(0, trimmedRow.Length - 2));
 								stringBuilder.Append(" += 1;");
+								newRowId++;
 								continue;
 							case "--":
 								stringBuilder.Append(trimmedRow.Substring(0, trimmedRow.Length - 2));
 								stringBuilder.Append(" += -1;");
+								newRowId++;
 								continue;
 						}
 					}
 
+					newRowId++;
 					stringBuilder.Append(trimmedRow + ";");
 				} else {
 					for (int i = 2; i < wordsInRow.Count; i++) {
 						switch (wordsInRow[i]) {
 							//if (wordsInRow.Length < i + 1) break;
 							case "+":
-								wordsInRow[i - 1] = "Add(" + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Add( " + wordsInRow[i - 1];
 								goto Ending;
 							case "-":
-								wordsInRow[i - 1] = "Subtract(" + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Subtract( " + wordsInRow[i - 1];
 								goto Ending;
 							case "*":
-								wordsInRow[i - 1] = "Multiply(" + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Multiply( " + wordsInRow[i - 1];
 								goto Ending;
 							case "/":
-								wordsInRow[i - 1] = "Divide(" + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Divide( " + wordsInRow[i - 1];
 								goto Ending;
 							default:
 								continue;
@@ -64,6 +77,7 @@ namespace Learning_cards.Scripts.Data.Classes
 					stringBuilder.Append(string.Join(" ", wordsInRow));
 				}
 
+				newRowId++;
 				stringBuilder.Append(';');
 			}
 
@@ -77,6 +91,10 @@ namespace Learning_cards.Scripts.Data.Classes
 			//remove ending semicolon
 			while (stringBuilder.Length > 0 && stringBuilder[stringBuilder.Length - 1] == ';')
 				stringBuilder.Remove(stringBuilder.Length - 1, 1);
+
+			//insert jump points
+			foreach (var jumpPoint in jumpPoints)
+				stringBuilder.Replace(jumpPoint.Key, jumpPoint.Value.ToString());
 
 			_compiledCode = stringBuilder.ToString();
 			_isCompiled   = true;

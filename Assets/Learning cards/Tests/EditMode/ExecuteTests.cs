@@ -151,5 +151,17 @@ namespace Learning_cards.Tests.EditMode
 				"return;").Execute();
 			Assert.AreEqual(bool.Parse(input1) ? 5 : 10, float.Parse(Dictionaries.DGlobalVariables["my_var"]));
 		}
+
+		[Test]
+		public void GotoJumpPointTest()
+		{
+			Dictionaries.Load();
+			new Code(
+				"myVar = 10;" +
+				"goto myJumpPoint;" +
+				"myVar = 0;" +
+				"myJumpPoint:").Execute();
+			Assert.AreEqual(10, float.Parse(Dictionaries.DGlobalVariables["myVar"]));
+		}
 	}
 }
