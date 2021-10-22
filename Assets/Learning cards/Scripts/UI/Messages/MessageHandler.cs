@@ -1,17 +1,26 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace Learning_cards.Scripts.UI.Messages
 {
 	public class MessageHandler : MonoBehaviour
 	{
-		private static           MessageHandler _messageHandler;
+		private static           MessageHandler _messageHandler = null;
 		public static            int            ActiveMessageWindows;
 		[SerializeField] private GameObject     messageBoxPrefab;
 		[SerializeField] private int            messageOffset          = 15;
 		[SerializeField] private int            messageContainmentSize = 25;
 
-		private void Awake() => _messageHandler = this;
+		private void Awake()
+		{
+			if (PlayerPrefs.GetInt("MessageHandler", 1) == 0) return;
+			if (_messageHandler is { })
+				Debug.LogWarning("Multiple MessageHandler detected!");
+			_messageHandler = this;
+		}
+
+		private void OnDestroy() => _messageHandler = null;
 
 		public static void ShowMessage(string text)
 		{
@@ -35,7 +44,8 @@ namespace Learning_cards.Scripts.UI.Messages
 			}
 			#endif
 
-			_messageHandler.Message(text);
+			// ReSharper disable once Unity.NoNullPropagation
+			_messageHandler?.Message(text);
 		}
 
 		private void Message(string text)

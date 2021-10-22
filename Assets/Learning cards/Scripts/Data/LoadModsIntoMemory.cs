@@ -4,6 +4,6 @@ namespace Learning_cards.Scripts.Data
 {
 	public class LoadModsIntoMemory : MonoBehaviour
 	{
-		private void Start() => Dictionaries.Load();
+		public void Start() => Dictionaries.Load();
 	}
 }
