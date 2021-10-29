@@ -52,16 +52,16 @@ namespace Learning_cards.Scripts.Data.Classes
 						switch (wordsInRow[i]) {
 							//if (wordsInRow.Length < i + 1) break;
 							case "+":
-								wordsInRow[i - 1] = "Add( " + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Add(" + wordsInRow[i - 1];
 								goto Ending;
 							case "-":
-								wordsInRow[i - 1] = "Subtract( " + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Subtract(" + wordsInRow[i - 1];
 								goto Ending;
 							case "*":
-								wordsInRow[i - 1] = "Multiply( " + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Multiply(" + wordsInRow[i - 1];
 								goto Ending;
 							case "/":
-								wordsInRow[i - 1] = "Divide( " + wordsInRow[i - 1];
+								wordsInRow[i - 1] = "Divide(" + wordsInRow[i - 1];
 								goto Ending;
 							default:
 								continue;
