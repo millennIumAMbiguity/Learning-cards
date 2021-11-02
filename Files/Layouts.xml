@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<Layout Name="Card" 
+Width="150" Height="300">
+    <Rect AnchorsMinX="0" AnchorsMinY="0" AnchorsMaxX="1" AnchorsMaxY="1">
+        <Text><?process <align="center">Hello Wolrd!?></Text>
+    </Rect>
+</Layout>
