@@ -1,12 +1,11 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace Learning_cards.Scripts.UI.Messages
 {
 	public class MessageHandler : MonoBehaviour
 	{
-		private static           MessageHandler _messageHandler = null;
+		private static           MessageHandler _messageHandler;
 		public static            int            ActiveMessageWindows;
 		[SerializeField] private GameObject     messageBoxPrefab;
 		[SerializeField] private int            messageOffset          = 15;
@@ -22,23 +21,35 @@ namespace Learning_cards.Scripts.UI.Messages
 
 		private void OnDestroy() => _messageHandler = null;
 
+		public static void ShowWarning(string text) =>
+			ShowMessage("<size=+6><b><color=yellow>WARNING:</color></b><size=-6>\n" + text);
+
+		public static void ShowError(string text) =>
+			ShowMessage("<size=+6><b><color=red>ERROR:</color></b><size=-6>\n" + text);
+
 		public static void ShowMessage(string text)
 		{
 			//When in the editor, use Debug.Log instead of MessageHandler
 			#if UNITY_EDITOR
 			if (!Application.isPlaying) {
-				bool     isError = false;
-				string   newText = "";
-				string[] s       = text.Split('<', '>');
+				bool     isError   = false;
+				bool     isWarning = false;
+				string   newText   = "";
+				string[] s         = text.Split('<', '>');
 				//remove formatting
 				for (int i = 0; i < s.Length; i++)
 					if ((i & 1) == 0) {
 						if (s[i] == "") continue;
-						if (!isError && s[i].Substring(0, 6).ToUpper() == "ERROR:") isError = true;
+						if (!isError) {
+							if (s[i].Substring(0, 6).ToUpper() == "ERROR:") isError                   = true;
+							if (!isWarning && s[i].Substring(0, 8).ToUpper() == "WARNING:") isWarning = true;
+						}
+
 						newText += s[i];
 					} else if (s[i] != "" && s[i].Split('=')[0] != "size") newText += '<' + s[i] + '>';
 
 				if (isError) Debug.LogError(newText);
+				else if (isWarning) Debug.LogWarning(newText);
 				else Debug.Log(newText);
 				return;
 			}

@@ -2,14 +2,15 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+using Learning_cards.Scripts.Parse;
 using Learning_cards.Scripts.UI.Messages;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Learning_cards.Scripts.Data.Classes
+namespace Learning_cards.Scripts.UI.XML
 {
-	public class UIDesigner : MonoBehaviour
+	public class UIXmlDesigner : MonoBehaviour
 	{
 		private const string ScemaPath = "Files/UISchema.xsd";
 		private       void   Awake() => LoadLayout("Files/Layouts.xml");
@@ -38,126 +39,27 @@ namespace Learning_cards.Scripts.Data.Classes
 				rTrans.SetParent(transform);
 			}
 
-			ApplyRectAttribute(ref rTrans, layoutNode.Attributes);
+			rTrans.ApplyAttributes(layoutNode.Attributes);
 
 			foreach (XmlNode node in layoutNode)
 				switch (node.Name) {
-					case "Rect":
+					case "rect":
 						CreateUiLayout(node, rTrans);
 						break;
-					case "Text":
+					case "text":
 						if (haveParent) layoutObj.name = "Text";
-						var text                       = layoutObj.AddComponent<TextMeshProUGUI>();
-						foreach (XmlAttribute attribute in node.Attributes)
-							switch (attribute.Name) {
-								case "FontSize":
-									text.fontSize = float.Parse(attribute.Value);
-									break;
-								case "Color":
-									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c))
-										text.color = c;
-									break;
-							}
-
-						text.text = node.InnerText;
+						layoutObj.AddComponent<TextMeshProUGUI>().ParseNode(node);
 						break;
-					case "Fill":
+					case "fill":
 						if (haveParent) layoutObj.name = "Fill";
-						var fill                       = layoutObj.AddComponent<RawImage>();
-						foreach (XmlAttribute attribute in node.Attributes)
-							switch (attribute.Name) {
-								case "Color":
-									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c))
-										fill.color = c;
-									break;
-							}
-
+						layoutObj.AddComponent<RawImage>().ParseAttributes(node.Attributes);
 						break;
-					case "Outline":
-						var outline = layoutObj.AddComponent<Outline>();
-						foreach (XmlAttribute attribute in node.Attributes)
-							switch (attribute.Name) {
-								case "Color":
-									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c))
-										outline.effectColor = c;
-									break;
-								case "Width":
-									float f = float.Parse(attribute.Value);
-									outline.effectDistance = new Vector2(f, f);
-									break;
-							}
-
+					case "outline":
+						layoutObj.AddComponent<Outline>().ParseAttributes(node.Attributes);
 						break;
 				}
 
 			return layoutObj;
-		}
-
-		private void ApplyRectAttribute(ref RectTransform rect, XmlAttributeCollection attributes)
-		{
-			Vector3 pos        = Vector3.zero;
-			Vector3 scale      = Vector3.one;
-			Vector3 rot        = Vector3.zero;
-			var     size       = new Vector2(100, 100);
-			var     anchorsMin = new Vector2(.5f, .5f);
-			var     anchorsMax = new Vector2(.5f, .5f);
-			var     pivot      = new Vector2(.5f, .5f);
-
-			foreach (XmlAttribute attribute in attributes)
-				switch (attribute.Name) {
-					case "X":
-						pos.x = float.Parse(attribute.Value);
-						break;
-					case "Y":
-						pos.y = float.Parse(attribute.Value);
-						break;
-					case "Z":
-						pos.z = float.Parse(attribute.Value);
-						break;
-					case "Width":
-						size.x = float.Parse(attribute.Value);
-						break;
-					case "Height":
-						size.y = float.Parse(attribute.Value);
-						break;
-					case "AnchorsMinX":
-						anchorsMin.x = float.Parse(attribute.Value);
-						break;
-					case "AnchorsMinY":
-						anchorsMin.y = float.Parse(attribute.Value);
-						break;
-					case "AnchorsMaxX":
-						anchorsMax.x = float.Parse(attribute.Value);
-						break;
-					case "AnchorsMaxY":
-						anchorsMax.y = float.Parse(attribute.Value);
-						break;
-					case "PivotX":
-						pivot.x = float.Parse(attribute.Value);
-						break;
-					case "PivotY":
-						pivot.y = float.Parse(attribute.Value);
-						break;
-					case "RotationX":
-						rot.x = float.Parse(attribute.Value);
-						break;
-					case "RotationY":
-						rot.y = float.Parse(attribute.Value);
-						break;
-					case "RotationZ":
-						rot.z = float.Parse(attribute.Value);
-						break;
-				}
-
-			rect.pivot         = pivot;
-			rect.anchorMin     = anchorsMin;
-			rect.anchorMax     = anchorsMax;
-			rect.localPosition = pos;
-			rect.localScale    = scale;
-			rect.localRotation = Quaternion.Euler(rot);
-			//rect.sizeDelta     = size;
-			rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
-			rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
 		}
 
 		public XmlDocument LoadDocumentWithSchemaValidation(string path)
@@ -207,11 +109,11 @@ namespace Learning_cards.Scripts.Data.Classes
 		{
 			switch (e.Severity) {
 				case XmlSeverityType.Warning:
-					MessageHandler.ShowMessage
+					MessageHandler.ShowWarning
 						("The following validation warning occurred: " + e.Message);
 					break;
 				case XmlSeverityType.Error:
-					MessageHandler.ShowMessage
+					MessageHandler.ShowError
 						("The following critical validation errors occurred: " + e.Message);
 					break;
 			}

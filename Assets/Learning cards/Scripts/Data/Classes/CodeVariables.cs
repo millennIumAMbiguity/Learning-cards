@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Learning_cards.Scripts.Parse;
 using Learning_cards.Scripts.UI.Messages;
 
 namespace Learning_cards.Scripts.Data.Classes
@@ -25,19 +26,11 @@ namespace Learning_cards.Scripts.Data.Classes
 
 			//get object variable
 			switch (GetId(spit[0], out int id)) {
-				case "players": {
-					Player targetPlayer = Dictionaries.Players[id];
-					return spit[1] switch {
-						"cards"     => throw new NotImplementedException(),
-						"character" => throw new NotImplementedException(),
-						"code"      => targetPlayer.Code._sourceCode,
-						"title"     => targetPlayer.Title,
-						_           => targetPlayer.Variables[spit[1]]
-					};
-				}
+				case "players": 
+					return Dictionaries.Players[id].ParseGet(spit[1]);
 				default:
-					MessageHandler.ShowMessage(
-						"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
+					MessageHandler.ShowError(
+						$"\"{spit[0]}\" was not recognised as a target class in:\n{s}");
 					return "NaN";
 			}
 		}
@@ -51,81 +44,20 @@ namespace Learning_cards.Scripts.Data.Classes
 			string   deltaValue = GetVars(newRow.Substring(words[0].Length + words[1].Length + 1).Trim());
 
 			//set Global variable
-			if (target.Length == 1)
-				switch (words[1]) {
-					case "=":
-						Dictionaries.SetToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
-						return;
-					case "+=":
-						Dictionaries.AddToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
-						return;
-					case "-=":
-						Dictionaries.SubToDictionary(Dictionaries.DGlobalVariables, words[0], deltaValue);
-						return;
-
-					default:
-						MessageHandler.ShowMessage(
-							$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
-						return;
-				}
-
+			if (target.Length == 1) {
+				Dictionaries.DGlobalVariables.ParseDictionary(words[0], deltaValue,words[1]);
+				return;
+			}
 
 			//set variable of object
 			switch (GetId(target[0], out int id)) {
 				case "players": {
-					Player targetPlayer = Dictionaries.Players[id];
-					switch (target[1]) {
-						case "cards":
-							throw new NotImplementedException();
-						case "character":
-							throw new NotImplementedException();
-						case "code":
-							switch (words[1]) {
-								case "=":
-									targetPlayer.Code.SourceCode = deltaValue;
-									return;
-								case "+=":
-									targetPlayer.Code.SourceCode += deltaValue;
-									return;
-								default:
-									MessageHandler.ShowMessage(
-										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
-									return;
-							}
-						case "title":
-							switch (words[1]) {
-								case "=":
-									targetPlayer.Title = deltaValue;
-									return;
-								case "+=":
-									targetPlayer.Title += deltaValue;
-									return;
-								default:
-									MessageHandler.ShowMessage(
-										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
-									return;
-							}
-						default:
-							switch (words[1]) {
-								case "=":
-									Dictionaries.SetToDictionary(targetPlayer.Variables, target[1], deltaValue);
-									return;
-								case "+=":
-									Dictionaries.AddToDictionary(targetPlayer.Variables, target[1], deltaValue);
-									return;
-								case "-=":
-									Dictionaries.SubToDictionary(targetPlayer.Variables, target[1], deltaValue);
-									return;
-								default:
-									MessageHandler.ShowMessage(
-										$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{words[1]}\" was not recognized as a valid action.");
-									return;
-							}
-					}
+					Dictionaries.Players[id].ParseValue(target[1], deltaValue, words[1]);
+					break;
 				}
 				default:
-					MessageHandler.ShowMessage(
-						"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nSpecified type not found.");
+					MessageHandler.ShowError(
+						$"\"{target[0]}\" was not recognised as a target class in:\n{newRow}");
 					return;
 			}
 		}
@@ -140,8 +72,8 @@ namespace Learning_cards.Scripts.Data.Classes
 			}
 
 			if (id == -1) {
-				MessageHandler.ShowMessage(
-					"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nIndex expected.");
+				MessageHandler.ShowError(
+					"Index expected.");
 				return "NaN";
 			}
 
