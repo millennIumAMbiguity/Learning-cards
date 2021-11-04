@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -12,77 +11,74 @@ namespace Learning_cards.Scripts.Data.Classes
 {
 	public class UIDesigner : MonoBehaviour
 	{
-		private void Awake() { LoadLayout("Files/Layouts.xml"); }
-
 		private const string ScemaPath = "Files/UISchema.xsd";
+		private       void   Awake() => LoadLayout("Files/Layouts.xml");
 
-		void LoadLayout(string path)
+		private void LoadLayout(string path)
 		{
-			var xmlDoc = LoadDocumentWithSchemaValidation(path);
+			XmlDocument xmlDoc = LoadDocumentWithSchemaValidation(path);
 
-			foreach (XmlNode node in xmlDoc) {
-				if (node.Name == "Layout") {
+			foreach (XmlNode node in xmlDoc)
+				if (node.Name == "Layout")
 					CreateUiLayout(node);
-				}
-			}
 		}
 
-		GameObject CreateUiLayout(XmlNode layoutNode, RectTransform parent = null)
+		private GameObject CreateUiLayout(XmlNode layoutNode, RectTransform parent = null)
 		{
 			GameObject    layoutObj;
 			RectTransform rTrans;
 			bool          haveParent = parent;
 			if (haveParent) {
-				 layoutObj = new GameObject("Rect", typeof(RectTransform));
-				 rTrans    = layoutObj.GetComponent<RectTransform>();
-				 rTrans.SetParent(parent);
-			} else { 
-				layoutObj     = new GameObject(layoutNode.Attributes[0].Value, typeof(RectTransform));
-				rTrans        = layoutObj.GetComponent<RectTransform>();
+				layoutObj = new GameObject("Rect", typeof(RectTransform));
+				rTrans    = layoutObj.GetComponent<RectTransform>();
+				rTrans.SetParent(parent);
+			} else {
+				layoutObj = new GameObject(layoutNode.Attributes[0].Value, typeof(RectTransform));
+				rTrans    = layoutObj.GetComponent<RectTransform>();
 				rTrans.SetParent(transform);
 			}
+
 			ApplyRectAttribute(ref rTrans, layoutNode.Attributes);
 
-			foreach (XmlNode node in layoutNode) {
+			foreach (XmlNode node in layoutNode)
 				switch (node.Name) {
 					case "Rect":
 						CreateUiLayout(node, rTrans);
 						break;
 					case "Text":
 						if (haveParent) layoutObj.name = "Text";
-						var text = layoutObj.AddComponent<TextMeshProUGUI>();
-						foreach (XmlAttribute attribute in node.Attributes) {
+						var text                       = layoutObj.AddComponent<TextMeshProUGUI>();
+						foreach (XmlAttribute attribute in node.Attributes)
 							switch (attribute.Name) {
 								case "FontSize":
 									text.fontSize = float.Parse(attribute.Value);
-								break;
+									break;
 								case "Color":
-									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c)) 
+									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c))
 										text.color = c;
 									break;
 							}
-						}
 
 						text.text = node.InnerText;
 						break;
 					case "Fill":
 						if (haveParent) layoutObj.name = "Fill";
-						var fill = layoutObj.AddComponent<RawImage>();
-						foreach (XmlAttribute attribute in node.Attributes) {
+						var fill                       = layoutObj.AddComponent<RawImage>();
+						foreach (XmlAttribute attribute in node.Attributes)
 							switch (attribute.Name) {
 								case "Color":
-									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c)) 
+									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c))
 										fill.color = c;
 									break;
 							}
-						}
+
 						break;
 					case "Outline":
 						var outline = layoutObj.AddComponent<Outline>();
-						foreach (XmlAttribute attribute in node.Attributes) {
+						foreach (XmlAttribute attribute in node.Attributes)
 							switch (attribute.Name) {
 								case "Color":
-									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c)) 
+									if (ColorUtility.TryParseHtmlString(attribute.Value, out Color c))
 										outline.effectColor = c;
 									break;
 								case "Width":
@@ -90,25 +86,24 @@ namespace Learning_cards.Scripts.Data.Classes
 									outline.effectDistance = new Vector2(f, f);
 									break;
 							}
-						}
+
 						break;
 				}
-			}
 
 			return layoutObj;
 		}
 
-		void ApplyRectAttribute(ref RectTransform rect, XmlAttributeCollection attributes)
+		private void ApplyRectAttribute(ref RectTransform rect, XmlAttributeCollection attributes)
 		{
 			Vector3 pos        = Vector3.zero;
 			Vector3 scale      = Vector3.one;
 			Vector3 rot        = Vector3.zero;
-			Vector2 size       = new Vector2(100,100);
-			Vector2 anchorsMin = new Vector2(.5f,.5f);
-			Vector2 anchorsMax = new Vector2(.5f,.5f);
-			Vector2 pivot      = new Vector2(.5f,.5f);
-			
-			foreach (XmlAttribute attribute in attributes) {
+			var     size       = new Vector2(100, 100);
+			var     anchorsMin = new Vector2(.5f, .5f);
+			var     anchorsMax = new Vector2(.5f, .5f);
+			var     pivot      = new Vector2(.5f, .5f);
+
+			foreach (XmlAttribute attribute in attributes)
 				switch (attribute.Name) {
 					case "X":
 						pos.x = float.Parse(attribute.Value);
@@ -153,7 +148,6 @@ namespace Learning_cards.Scripts.Data.Classes
 						rot.z = float.Parse(attribute.Value);
 						break;
 				}
-			}
 
 			rect.pivot         = pivot;
 			rect.anchorMin     = anchorsMin;
@@ -170,12 +164,12 @@ namespace Learning_cards.Scripts.Data.Classes
 		{
 			XmlReader reader;
 
-			XmlReaderSettings settings = new XmlReaderSettings();
+			var settings = new XmlReaderSettings();
 
 			// Helper method to retrieve schema.
 			XmlSchema schema = getSchema();
 
-			if (schema == null) { return null; }
+			if (schema == null) return null;
 
 			settings.Schemas.Add(schema);
 
@@ -184,7 +178,7 @@ namespace Learning_cards.Scripts.Data.Classes
 				settings.ValidationFlags | XmlSchemaValidationFlags.ReportValidationWarnings;
 			settings.ValidationType = ValidationType.Schema;
 
-			try { reader = XmlReader.Create(path, settings); } catch (System.IO.FileNotFoundException) {
+			try { reader = XmlReader.Create(path, settings); } catch (FileNotFoundException) {
 				//if (generateXML) {
 				//	string       xml       = generateXMLString();
 				//	byte[]       byteArray = Encoding.UTF8.GetBytes(xml);
@@ -196,7 +190,7 @@ namespace Learning_cards.Scripts.Data.Classes
 				}
 			}
 
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.PreserveWhitespace = false;
 			doc.Load(reader);
 			reader.Close();
@@ -209,7 +203,7 @@ namespace Learning_cards.Scripts.Data.Classes
 //  Event handler that is raised when XML doesn't validate against the schema.
 //
 //************************************************************************************
-		void settings_ValidationEventHandler(object sender, ValidationEventArgs e)
+		private void settings_ValidationEventHandler(object sender, ValidationEventArgs e)
 		{
 			switch (e.Severity) {
 				case XmlSeverityType.Warning:
@@ -225,25 +219,22 @@ namespace Learning_cards.Scripts.Data.Classes
 
 		private XmlSchema getSchema(bool generateSchema = true)
 		{
-			XmlSchemaSet xs = new XmlSchemaSet();
-			XmlSchema    schema;
-			try { schema = xs.Add("LearningCards", ScemaPath); } catch (System.IO.FileNotFoundException) {
+			var       xs = new XmlSchemaSet();
+			XmlSchema schema;
+			try { schema = xs.Add(null, ScemaPath); } catch (FileNotFoundException) {
 				Debug.LogWarning(ScemaPath + " not found.");
 				if (!generateSchema) return null;
-				string       xmlSchemaString = generateXMLSchema();
-				byte[]       byteArray       = Encoding.UTF8.GetBytes(xmlSchemaString);
-				MemoryStream stream          = new MemoryStream(byteArray);
-				XmlReader    reader          = XmlReader.Create(stream);
+				string xmlSchemaString = generateXMLSchema();
+				byte[] byteArray       = Encoding.UTF8.GetBytes(xmlSchemaString);
+				var    stream          = new MemoryStream(byteArray);
+				var    reader          = XmlReader.Create(stream);
 				schema = xs.Add(null, reader);
 			}
 
 			return schema;
 		}
 
-		private string generateXMLSchema()
-		{
-			return
-				"<?xml version=\"1.0\"?><xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><xs:complexType name=\"Rect\"><xs:sequence><xs:element name=\"Text\" minOccurs=\"0\"><xs:complexType><xs:simpleContent><xs:extension base=\"xs:string\"><xs:attribute name=\"FontSize\" type=\"xs:decimal\"/><xs:attribute name=\"Color\" type=\"xs:string\"/></xs:extension></xs:simpleContent></xs:complexType></xs:element><xs:element name=\"Image\" minOccurs=\"0\"><xs:complexType><xs:simpleContent><xs:extension base=\"xs:string\"><xs:attribute name=\"Color\" type=\"xs:string\"/></xs:extension></xs:simpleContent></xs:complexType></xs:element><xs:element type=\"Rect\" name=\"Rect\" minOccurs=\"0\" maxOccurs=\"unbounded\"/></xs:sequence><xs:attribute type=\"xs:float\" name=\"X\"/><xs:attribute type=\"xs:float\" name=\"Y\"/><xs:attribute type=\"xs:float\" name=\"Width\"/><xs:attribute type=\"xs:float\" name=\"Height\"/><xs:attribute type=\"xs:float\" name=\"AnchorsMinX\"/><xs:attribute type=\"xs:float\" name=\"AnchorsMinY\"/><xs:attribute type=\"xs:float\" name=\"AnchorsMaxX\"/><xs:attribute type=\"xs:float\" name=\"AnchorsMaxY\"/><xs:attribute type=\"xs:float\" name=\"PivotX\"/><xs:attribute type=\"xs:float\" name=\"PivotY\"/><xs:attribute type=\"xs:float\" name=\"RotationX\"/><xs:attribute type=\"xs:float\" name=\"RotationY\"/></xs:complexType><xs:element name=\"Layout\"><xs:complexType><xs:simpleContent><xs:extension base=\"Rect\"><xs:attribute name=\"Name\" type=\"xs:string\" use=\"required\"/></xs:extension></xs:simpleContent></xs:complexType></xs:element></xs:schema>";
-		}
+		private string generateXMLSchema() =>
+			"<?xml version=\"1.0\"?> <xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"> <xs:complexType name=\"Rect\"> <xs:choice> <xs:sequence> <xs:element name=\"Text\"> <xs:complexType> <xs:simpleContent> <xs:extension base=\"xs:string\"> <xs:attribute name=\"FontSize\" type=\"xs:decimal\"/> <xs:attribute name=\"Color\" type=\"xs:string\"/> </xs:extension> </xs:simpleContent> </xs:complexType> </xs:element> <xs:element type=\"Rect\" name=\"Rect\" minOccurs=\"0\" maxOccurs=\"unbounded\"/> </xs:sequence> <xs:sequence> <xs:element name=\"Image\"> <xs:complexType> <xs:simpleContent> <xs:extension base=\"xs:string\"> <xs:attribute name=\"Color\" type=\"xs:string\"/> </xs:extension> </xs:simpleContent> </xs:complexType> </xs:element> <xs:element type=\"Rect\" name=\"Rect\" minOccurs=\"0\" maxOccurs=\"unbounded\"/> </xs:sequence> <xs:sequence> <xs:element name=\"Fill\"> <xs:complexType> <xs:attribute name=\"Color\" type=\"xs:string\"/> </xs:complexType> </xs:element> <xs:element name=\"Outline\" minOccurs=\"0\"> <xs:complexType> <xs:attribute name=\"Color\" type=\"xs:string\"/> <xs:attribute name=\"Width\" type=\"xs:decimal\"/> </xs:complexType> </xs:element> <xs:element type=\"Rect\" name=\"Rect\" minOccurs=\"0\" maxOccurs=\"unbounded\"/> </xs:sequence> <xs:sequence> <xs:element type=\"Rect\" name=\"Rect\" minOccurs=\"0\" maxOccurs=\"unbounded\"/> </xs:sequence> </xs:choice> <xs:attribute type=\"xs:float\" name=\"X\"/> <xs:attribute type=\"xs:float\" name=\"Y\"/> <xs:attribute type=\"xs:float\" name=\"Z\"/> <xs:attribute type=\"xs:float\" name=\"Width\"/> <xs:attribute type=\"xs:float\" name=\"Height\"/> <xs:attribute type=\"xs:float\" name=\"AnchorsMinX\"/> <xs:attribute type=\"xs:float\" name=\"AnchorsMinY\"/> <xs:attribute type=\"xs:float\" name=\"AnchorsMaxX\"/> <xs:attribute type=\"xs:float\" name=\"AnchorsMaxY\"/> <xs:attribute type=\"xs:float\" name=\"PivotX\"/> <xs:attribute type=\"xs:float\" name=\"PivotY\"/> <xs:attribute type=\"xs:float\" name=\"RotationX\"/> <xs:attribute type=\"xs:float\" name=\"RotationY\"/> <xs:attribute type=\"xs:float\" name=\"RotationZ\"/> </xs:complexType> <xs:element name=\"Layout\"> <xs:complexType> <xs:complexContent> <xs:extension base=\"Rect\"> <xs:attribute name=\"Name\" type=\"xs:string\" use=\"required\"/> </xs:extension> </xs:complexContent> </xs:complexType> </xs:element> </xs:schema>";
 	}
 }
