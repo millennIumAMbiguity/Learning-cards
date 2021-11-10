@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
-	public partial class Code
+	public partial struct Code
 	{
 		public void Compile()
 		{

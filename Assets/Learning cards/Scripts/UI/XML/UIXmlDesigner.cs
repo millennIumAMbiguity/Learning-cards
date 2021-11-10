@@ -1,9 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+using Learning_cards.Scripts.Mods;
 using Learning_cards.Scripts.Parse;
 using Learning_cards.Scripts.UI.Messages;
+using Learning_cards.Scripts.UI.XML.Layouts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,25 +17,89 @@ namespace Learning_cards.Scripts.UI.XML
 {
 	public class UIXmlDesigner : MonoBehaviour
 	{
-		private const string ScemaPath = "Files/UISchema.xsd";
-		private       void   Awake() => LoadLayout("Files/Layouts.xml");
+		private const string SchemaPath = "Files/UISchema.xsd";
+
+		private static UIXmlDesigner _instance;
+
+		public static List<GameObject> Layouts    = new List<GameObject>();
+		public static GameObject[]     UIElements = Array.Empty<GameObject>();
+
+		public static int SetUIElements(GameObject element)
+		{
+			int i;
+			for (i = 0; i < UIElements.Length; i++) if (UIElements[i] == null) goto ret;
+			Array.Resize(ref UIElements, i+2);
+			ret:
+			element.SetActive(true);
+			UIElements[i] = element;
+			return i;
+		}
+		public static int NewUIElement(int layoutId)
+		{
+			if (Layouts.Count > layoutId) return NewUIElement(Layouts[layoutId]);
+			MessageHandler.ShowError("Layout with id " + layoutId + " not found");
+			return -1;
+		}
+
+		public static int NewUIElement(string layoutName)
+		{
+			var layout = Layouts.FirstOrDefault(x => x.name == layoutName);
+			if (layout != null) return NewUIElement(layout);
+			MessageHandler.ShowError("Layout " + layoutName + " not found");
+			return -1;
+		}
+
+		static int NewUIElement(GameObject layout) 
+		{
+			var newElement = Instantiate(layout, _instance.transform);
+			newElement.name = "UIElement "+ UIElements.Length + ": " + layout.name;
+			return SetUIElements(newElement);
+		}
+
+		private void Awake()
+		{
+			_instance = this;
+			foreach (var mod in LoadMods.ActiveMods) 
+				if (File.Exists(mod.Xml)) LoadLayout(mod.Xml);
+
+			//NewUIElement(0);
+		}
+
+		private void OnDestroy()
+		{
+			XmlLayout.Layouts.Clear();
+			Layouts.Clear();
+			UIElements = Array.Empty<GameObject>();
+		}
 
 		private void LoadLayout(string path)
 		{
 			XmlDocument xmlDoc = LoadDocumentWithSchemaValidation(path);
 
-			foreach (XmlNode node in xmlDoc)
-				if (node.Name == "Layout")
-					CreateUiLayout(node);
+			foreach (XmlNode node in xmlDoc.Cast<XmlNode>().Where(node => node.Name == "layout"))
+				Layouts.Add(CreateUiLayout(node));
+
+			foreach (var layout in Layouts) {
+				layout.SetActive(false);
+			}
 		}
 
-		private GameObject CreateUiLayout(XmlNode layoutNode, RectTransform parent = null)
+		private GameObject CreateUiLayout(XmlNode layoutNode, RectTransform parent = null, XmlLayout baseLayout = null)
 		{
 			GameObject    layoutObj;
 			RectTransform rTrans;
 			bool          haveParent = parent;
 			if (haveParent) {
 				layoutObj = new GameObject("Rect", typeof(RectTransform));
+				foreach (XmlAttribute attribute in layoutNode.Attributes) {
+					if (attribute.Name != "type") continue;
+					switch (attribute.Value) {
+						case "card":
+							baseLayout = layoutObj.AddComponent<XmlLayoutCard>();
+							break;
+					}
+					break;
+				}
 				rTrans    = layoutObj.GetComponent<RectTransform>();
 				rTrans.SetParent(parent);
 			} else {
@@ -44,7 +113,7 @@ namespace Learning_cards.Scripts.UI.XML
 			foreach (XmlNode node in layoutNode)
 				switch (node.Name) {
 					case "rect":
-						CreateUiLayout(node, rTrans);
+						CreateUiLayout(node, rTrans, baseLayout);
 						break;
 					case "text":
 						if (haveParent) layoutObj.name = "Text";
@@ -123,8 +192,8 @@ namespace Learning_cards.Scripts.UI.XML
 		{
 			var       xs = new XmlSchemaSet();
 			XmlSchema schema;
-			try { schema = xs.Add(null, ScemaPath); } catch (FileNotFoundException) {
-				Debug.LogWarning(ScemaPath + " not found.");
+			try { schema = xs.Add(null, SchemaPath); } catch (FileNotFoundException) {
+				Debug.LogWarning(SchemaPath + " not found.");
 				if (!generateSchema) return null;
 				string xmlSchemaString = generateXMLSchema();
 				byte[] byteArray       = Encoding.UTF8.GetBytes(xmlSchemaString);

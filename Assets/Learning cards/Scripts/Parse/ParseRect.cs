@@ -8,56 +8,56 @@ namespace Learning_cards.Scripts.Parse
 		public static void ParseValue(this RectTransform rect, string name, string value)
 		{
 			switch (name) {
-				case "X": {
+				case "x": {
 					var position = rect.position;
 					rect.position = new Vector3(float.Parse(value), position.y, position.z);
 					break;
 				}
-				case "Y": {
+				case "y": {
 					var position = rect.position;
 					rect.position = new Vector3(position.x, float.Parse(value), position.z);
 					break;
 				}
-				case "Z": {
+				case "z": {
 					var position = rect.position;
 					rect.position = new Vector3(position.x, position.y, float.Parse(value));
 					break;
 				}
-				case "Width":
+				case "width":
 					rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, float.Parse(value));
 					break;
-				case "Height":
+				case "height":
 					rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, float.Parse(value));
 					break;
-				case "AnchorsMinX":
+				case "anchorsMinX":
 					rect.anchorMin = new Vector2(float.Parse(value), rect.anchorMin.y);
 					break;
-				case "AnchorsMinY":
+				case "anchorsMinY":
 					rect.anchorMin = new Vector2(rect.anchorMin.x, float.Parse(value));
 					break;
-				case "AnchorsMaxX":
+				case "anchorsMaxX":
 					rect.anchorMax = new Vector2(float.Parse(value), rect.anchorMax.y);
 					break;
-				case "AnchorsMaxY":
+				case "anchorsMaxY":
 					rect.anchorMax = new Vector2(rect.anchorMax.x, float.Parse(value));
 					break;
-				case "PivotX":
+				case "pivotX":
 					rect.pivot = new Vector2(float.Parse(value), rect.pivot.y);
 					break;
-				case "PivotY":
+				case "pivotY":
 					rect.pivot = new Vector2(rect.pivot.x, float.Parse(value));
 					break;
-				case "RotationX": {
+				case "rotationX": {
 					var rotation = rect.rotation.eulerAngles;
 					rect.rotation = Quaternion.Euler(float.Parse(value), rotation.y, rotation.z);
 					break;
 				}
-				case "RotationY": {
+				case "rotationY": {
 					var rotation = rect.rotation.eulerAngles;
 					rect.rotation = Quaternion.Euler(rotation.x, float.Parse(value), rotation.z);
 					break;
 				}
-				case "RotationZ": {
+				case "rotationZ": {
 					var rotation = rect.rotation.eulerAngles;
 					rect.rotation = Quaternion.Euler(rotation.x, rotation.y, float.Parse(value));
 					break;
@@ -77,46 +77,46 @@ namespace Learning_cards.Scripts.Parse
 
 			foreach (XmlAttribute attribute in attributes)
 				switch (attribute.Name) {
-					case "X":
+					case "x":
 						pos.x = float.Parse(attribute.Value);
 						break;
-					case "Y":
+					case "y":
 						pos.y = float.Parse(attribute.Value);
 						break;
-					case "Z":
+					case "z":
 						pos.z = float.Parse(attribute.Value);
 						break;
-					case "Width":
+					case "width":
 						size.x = float.Parse(attribute.Value);
 						break;
-					case "Height":
+					case "height":
 						size.y = float.Parse(attribute.Value);
 						break;
-					case "AnchorsMinX":
+					case "anchorsMinX":
 						anchorsMin.x = float.Parse(attribute.Value);
 						break;
-					case "AnchorsMinY":
+					case "anchorsMinY":
 						anchorsMin.y = float.Parse(attribute.Value);
 						break;
-					case "AnchorsMaxX":
+					case "anchorsMaxX":
 						anchorsMax.x = float.Parse(attribute.Value);
 						break;
-					case "AnchorsMaxY":
+					case "anchorsMaxY":
 						anchorsMax.y = float.Parse(attribute.Value);
 						break;
-					case "PivotX":
+					case "pivotX":
 						pivot.x = float.Parse(attribute.Value);
 						break;
-					case "PivotY":
+					case "pivotY":
 						pivot.y = float.Parse(attribute.Value);
 						break;
-					case "RotationX":
+					case "rotationX":
 						rot.x = float.Parse(attribute.Value);
 						break;
-					case "RotationY":
+					case "rotationY":
 						rot.y = float.Parse(attribute.Value);
 						break;
-					case "RotationZ":
+					case "rotationZ":
 						rot.z = float.Parse(attribute.Value);
 						break;
 				}

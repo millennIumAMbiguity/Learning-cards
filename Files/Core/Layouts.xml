@@ -1,4 +1,4 @@
-<layout name="Card" 
+<layout name="BaseCard" type="card" 
 width="150" height="300">
     <fill color="#C8C8C8"/>
     <outline color="#000000" width="2"/>

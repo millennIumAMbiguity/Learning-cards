@@ -8,19 +8,23 @@ namespace Learning_cards.Scripts.Mods
 	public class LoadMods : MonoBehaviour
 	{
 		private const string ModsPath = "mods";
+		private const string FilesPath = "Files";
 
-		public static List<IMod> ActiveMods   = new List<IMod>();
-		public static List<IMod> InactiveMods = new List<IMod>();
-
-		[SerializeField] private SOMod[] defaultContent;
+		public static List<Mod.Mod> ActiveMods   = new List<Mod.Mod>();
+		public static List<Mod.Mod> InactiveMods = new List<Mod.Mod>();
 
 		private void Awake()
 		{
-			//load default built in content
-			foreach (SOMod mod in defaultContent)
-				if (mod.Active) ActiveMods.Add(mod);
-				else InactiveMods.Add(mod);
-
+			ActiveMods.Clear();
+			InactiveMods.Clear();
+			
+			//load built in mods (mods that are always enabled)
+			Directory.CreateDirectory(FilesPath);
+			foreach (string modPath in Directory.GetDirectories(FilesPath)) {
+				var mod = new Mod.Mod(modPath, true);
+				ActiveMods.Add(mod);
+			}
+			
 			//load mods
 			Directory.CreateDirectory(ModsPath);
 			foreach (string modPath in Directory.GetDirectories(ModsPath)) {
@@ -30,7 +34,7 @@ namespace Learning_cards.Scripts.Mods
 			}
 
 			Debug.Log(
-				$"ActiveMods: {ActiveMods.Count}\nInactiveMods: {InactiveMods.Count}\ndefaultContent: {defaultContent.Length}");
+				$"ActiveMods: {ActiveMods.Count}\nInactiveMods: {InactiveMods.Count}");
 			//MessageHandler.ShowMessage("Hello World!");
 		}
 	}

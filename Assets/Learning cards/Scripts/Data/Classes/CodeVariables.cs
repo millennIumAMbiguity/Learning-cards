@@ -5,7 +5,7 @@ using Learning_cards.Scripts.UI.Messages;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
-	public partial class Code
+	public partial struct Code
 	{
 		private static string GetVars(string s)
 		{

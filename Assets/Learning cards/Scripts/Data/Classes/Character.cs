@@ -3,6 +3,11 @@
 	public class Character : ITitleId
 	{
 		public string Title;
-		public int    Id { get; set; }
+		public Code   Code { get; set; }
+		public int    Id   { get; set; }
+
+		public bool IsPlayable { get; set; } = true;
+		public bool IsAI       { get; set; }
+        
 	}
 }

@@ -57,7 +57,10 @@ namespace Learning_cards.Scripts.Data
 
 #endregion
 
-			foreach (IMod activeMod in LoadMods.ActiveMods) activeMod.GetFunctions(ref DCode, ref LCode);
+			foreach (Mod activeMod in LoadMods.ActiveMods) {
+				activeMod.GetFunctions(ref DCode, ref LCode);
+				activeMod.GetCharacters(ref DCharacters, ref LCharacter);
+			}
 
 			IsLoaded = true;
 
@@ -69,13 +72,14 @@ namespace Learning_cards.Scripts.Data
 			*/
 		}
 
-		public static Character Character(int    id)   => LCharacter[id];
+		public static Character Character(int    id)   => LCharacter.Count > id ? LCharacter[id] : null;
 		public static Character Character(string name) => DCharacters[name];
 
-		public static Card Card(int    id)   => LCards[id];
+		public static Card Card(int id) => LCards.Count > id ? LCards[id] : null;
+
 		public static Card Card(string name) => DCards[name];
 
-		public static ICode    Code(int    id)   => LCode[id];
+		public static ICode    Code(int    id)   => LCode.Count > id ? LCode[id] : null;
 		public static Function Code(string name) => DCode[name];
 
 		public static string GlobalVariables(string name) => DGlobalVariables[name];

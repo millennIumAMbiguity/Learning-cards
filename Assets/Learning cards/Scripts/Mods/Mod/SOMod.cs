@@ -27,7 +27,8 @@ namespace Learning_cards.Scripts.Mods.Mod
 			set => title = value;
 		}
 
-		public string Version                                                                  { get; set; } = "";
-		public void   GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list) { }
+		public string Version                                                                        { get; set; } = "";
+		public void   GetFunctions(ref  Dictionary<string, Function>  dir, ref List<ICode>     list) { }
+		public void   GetCharacters(ref Dictionary<string, Character> dir, ref List<Character> list) { }
 	}
 }

@@ -9,11 +9,11 @@ namespace Learning_cards.Scripts.Parse
 		public static void ParseValue(this Outline outline, string name, string value)
 		{
 			switch (name) {
-				case "Color":
+				case "color":
 					if (ColorUtility.TryParseHtmlString(value, out Color c))
 						outline.effectColor = c;
 					break;
-				case "Width":
+				case "width":
 					float f = float.Parse(value);
 					outline.effectDistance = new Vector2(f, f);
 					break;

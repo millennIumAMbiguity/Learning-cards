@@ -11,5 +11,10 @@ namespace Learning_cards.Scripts.Parse
 		private const string InvalidSetTypeValidSets1 = "\nValid set actions are: \"=\", \"+=\", and \"-=\".";
 		private const string InvalidSetTypeValidSets2 = "\nValid set actions are: \"=\" and \"+=\".";
 		private const string InvalidSetTypeValidSets3 = "\nValid set actions are: \"=\".";
+		
+		private const string InvalidAttributeErrorMsg = "\"{0}\" was not recognized as a valid attribute.";
+		
+		private const string TargetNotFoundErrorMsg = "\"{0}\" was not found in dictionaries.";
+        
 	}
 }

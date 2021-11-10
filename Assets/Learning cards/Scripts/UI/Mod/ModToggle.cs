@@ -13,11 +13,16 @@ namespace Learning_cards.Scripts.UI.Mod
 		[SerializeField] private TMP_Text title;
 		[SerializeField] private TMP_Text version;
 
-		private IMod _mod;
+		private Mods.Mod.Mod _mod;
 
-		public IMod Mod {
+		public Mods.Mod.Mod Mod {
 			private get => _mod;
 			set {
+				if (value._isBultIn) {
+					transform.GetComponentsInChildren<Transform>()[1].gameObject.SetActive(false);
+				} else if (_mod is { _isBultIn: true }) {
+					transform.GetComponentsInChildren<Transform>()[1].gameObject.SetActive(true);
+				}
 				_mod                        = value;
 				title.text                  = value.Title;
 				version.text                = value.Version;

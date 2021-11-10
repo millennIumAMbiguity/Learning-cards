@@ -9,7 +9,7 @@ namespace Learning_cards.Scripts.Parse
 		public static void ParseValue(this RawImage img, string name, string value)
 		{
 			switch (name) {
-				case "Color":
+				case "color":
 					if (ColorUtility.TryParseHtmlString(value, out Color c))
 						img.color = c;
 					break;

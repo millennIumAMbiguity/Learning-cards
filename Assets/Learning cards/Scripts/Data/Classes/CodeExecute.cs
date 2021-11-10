@@ -3,7 +3,7 @@ using Learning_cards.Scripts.UI.Messages;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
-	public partial class Code
+	public partial struct Code
 	{
 		public string Execute(string input = null)
 		{

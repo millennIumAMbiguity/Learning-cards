@@ -11,6 +11,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 		string     Title   { get; set; }
 		string     Version { get; set; }
 
-		void GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list);
+		void GetFunctions(ref  Dictionary<string, Function>  dir, ref List<ICode>     list);
+		void GetCharacters(ref Dictionary<string, Character> dir, ref List<Character> list);
 	}
 }

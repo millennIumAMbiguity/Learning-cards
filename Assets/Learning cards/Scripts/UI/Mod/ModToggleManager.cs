@@ -11,12 +11,12 @@ namespace Learning_cards.Scripts.UI.Mod
 
 		private void Start()
 		{
-			foreach (IMod mod in LoadMods.ActiveMods) {
+			foreach (Mods.Mod.Mod mod in LoadMods.ActiveMods) {
 				var toggle = Instantiate(togglePrefab, content).GetComponent<ModToggle>();
 				toggle.Mod = mod;
 			}
 
-			foreach (IMod mod in LoadMods.InactiveMods) {
+			foreach (Mods.Mod.Mod mod in LoadMods.InactiveMods) {
 				var toggle = Instantiate(togglePrefab, content).GetComponent<ModToggle>();
 				toggle.Mod = mod;
 			}
