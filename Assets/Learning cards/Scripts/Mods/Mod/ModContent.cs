@@ -9,6 +9,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 		CardPacks    = 1 << 1,
 		Characters   = 1 << 2,
 		Functions    = 1 << 3,
-		Translations = 1 << 4
+		Translations = 1 << 4,
+		Script       = 1 << 5,
 	}
 }

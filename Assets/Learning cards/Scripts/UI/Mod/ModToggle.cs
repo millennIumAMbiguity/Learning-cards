@@ -1,4 +1,5 @@
 ﻿using System;
+using Learning_cards.Scripts.Data;
 using Learning_cards.Scripts.Mods;
 using Learning_cards.Scripts.Mods.Mod;
 using TMPro;
@@ -18,9 +19,9 @@ namespace Learning_cards.Scripts.UI.Mod
 		public Mods.Mod.Mod Mod {
 			private get => _mod;
 			set {
-				if (value._isBultIn) {
+				if (value.IsBuiltIn) {
 					transform.GetComponentsInChildren<Transform>()[1].gameObject.SetActive(false);
-				} else if (_mod is { _isBultIn: true }) {
+				} else if (_mod is { IsBuiltIn: true }) {
 					transform.GetComponentsInChildren<Transform>()[1].gameObject.SetActive(true);
 				}
 				_mod                        = value;
@@ -36,6 +37,7 @@ namespace Learning_cards.Scripts.UI.Mod
 			if (Mod is null) throw new NullReferenceException("Mod is null");
 			#endif
 			if (Mod.Active == state) return;
+			Dictionaries.IsLoaded = false;
 			if (Mod.Active) {
 				LoadMods.InactiveMods.Add(Mod);
 				LoadMods.ActiveMods.Remove(Mod);

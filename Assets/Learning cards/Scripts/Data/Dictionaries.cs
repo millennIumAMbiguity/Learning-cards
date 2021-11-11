@@ -26,6 +26,8 @@ namespace Learning_cards.Scripts.Data
 		{
 			if (IsLoaded) return;
 
+			Players = new List<Player>();
+			
 			LCharacter = new List<Character>();
 			LCards     = new List<Card>();
 			LCode      = new List<ICode>();
@@ -86,6 +88,12 @@ namespace Learning_cards.Scripts.Data
 
 
 #region staticFuntions
+
+		public static void AddNewPlayer(Player player)
+        {
+			Players.Add(player);
+			player.Code.Execute("start");
+		}
 
 		public static void AddToDictionary(Dictionary<string, string> dictionary, string name, string value)
 		{

@@ -9,49 +9,56 @@ namespace Learning_cards.Scripts.Mods.Mod
 {
 	public class Mod
 	{
-		public bool _isBultIn;
-		
+		internal readonly bool IsBuiltIn;
+		internal          Code Script;
+
+		private readonly ModContent _content;
+		private readonly string     _path;
+
+		public readonly string Title;
+		public readonly string Version;
+		public readonly string Xml;
+
+		internal bool HaveScript => (_content & ModContent.Script) != 0;
+
 		public Mod(string path, bool builtIn = false)
 		{
 			if (path is null) return;
-			_isBultIn = builtIn;
+			IsBuiltIn = builtIn;
 			var json = JsonUtility.FromJson<JsonModData>(File.ReadAllText($"{path}\\version.json"));
-			Path    = path;
+			_path    = path;
 			Xml     = path+'\\'+json.xml;
 			Title   = json.title;
 			Version = json.version;
 
-			Content = 0;
+			_content = 0;
 			if (Directory.Exists(path + "\\Cards"))
-				Content |= ModContent.Cards;
+				_content |= ModContent.Cards;
 			if (Directory.Exists(path + "\\Characters"))
-				Content |= ModContent.Characters;
+				_content |= ModContent.Characters;
 			if (Directory.Exists(path + "\\Functions"))
-				Content |= ModContent.Functions;
+				_content |= ModContent.Functions;
 			if (Directory.Exists(path + "\\Translations"))
-				Content |= ModContent.Translations;
+				_content |= ModContent.Translations;
 			if (Directory.Exists(path + "\\CardPacks"))
-				Content |= ModContent.CardPacks;
-		}
-
-		public bool Active {
-			get => _isBultIn || PlayerPrefs.GetInt(Title, 0) == 1;
-			set {
-				if (!_isBultIn) PlayerPrefs.SetInt(Title, value ? 1 : 0);
+				_content |= ModContent.CardPacks;
+			if (File.Exists(path + "\\script.txt")) {
+				_content |= ModContent.Script;
+				Script   =  new Code(File.ReadAllText(path + "\\script.txt"));
 			}
 		}
 
-		public readonly ModContent Content;
-		public readonly string     Path;
-
-		public string Title   { get; set; }
-		public string Version { get; set; }
-		public string Xml { get; set; }
+		public bool Active {
+			get => IsBuiltIn || PlayerPrefs.GetInt(Title, 0) == 1;
+			set {
+				if (!IsBuiltIn) PlayerPrefs.SetInt(Title, value ? 1 : 0);
+			}
+		}
 
 		public void GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list)
 		{
-			if (!Content.HasFlag(ModContent.Functions) || PlayerPrefs.GetInt(Title + ".Functions", 1) == 0) return;
-			string[] functions = Directory.GetFiles(Path + "\\Functions");
+			if (!_content.HasFlag(ModContent.Functions) || PlayerPrefs.GetInt(Title + ".Functions", 1) == 0) return;
+			string[] functions = Directory.GetFiles(_path + "\\Functions");
 
 			foreach (string function in functions) {
 				string title = function.Split('\\').Last().Split('.')[0];
@@ -64,8 +71,8 @@ namespace Learning_cards.Scripts.Mods.Mod
 
 		public void GetCharacters(ref Dictionary<string, Character> dir, ref List<Character> list)
 		{
-			if (!Content.HasFlag(ModContent.Characters) || PlayerPrefs.GetInt(Title + ".Characters", 1) == 0) return;
-			string[] characters = Directory.GetFiles(Path + "\\Characters");
+			if (!_content.HasFlag(ModContent.Characters) || PlayerPrefs.GetInt(Title + ".Characters", 1) == 0) return;
+			string[] characters = Directory.GetFiles(_path + "\\Characters");
 
 			foreach (string character in characters) {
 				string[] split = character.Split('\\').Last().Split('.');

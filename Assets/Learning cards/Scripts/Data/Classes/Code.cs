@@ -7,7 +7,7 @@
 		private bool   _isCompiled;
 		private string _sourceCode;
 
-		public Code(string scoreCode = "NaN")
+		public Code(string scoreCode)
 		{
 			_isCompiled   = false;
 			_compiledCode = "";
