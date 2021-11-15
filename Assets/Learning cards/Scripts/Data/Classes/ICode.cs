@@ -2,6 +2,6 @@
 {
 	public interface ICode
 	{
-		string Execute(string input = null);
+		string Execute(string input);
 	}
 }

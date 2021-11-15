@@ -7,6 +7,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 	{
 		public string title;
 		public string version;
-		public string xml = "Layouts.xml";
+		public string xml    = "Layouts.xml";
+		public string script = "script.txt";
 	}
 }

@@ -1940,6 +1940,21 @@ PrefabInstance:
       propertyPath: m_IsOn
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9089130706173479934, guid: 0da9db7c28819cd4aa49f01ddc5574ed,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089130706173479934, guid: 0da9db7c28819cd4aa49f01ddc5574ed,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UpdateProperty
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089130706173479934, guid: 0da9db7c28819cd4aa49f01ddc5574ed,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0da9db7c28819cd4aa49f01ddc5574ed, type: 3}
 --- !u!114 &8246893210410055496

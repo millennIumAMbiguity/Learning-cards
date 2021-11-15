@@ -42,9 +42,9 @@ namespace Learning_cards.Scripts.Mods.Mod
 				_content |= ModContent.Translations;
 			if (Directory.Exists(path + "\\CardPacks"))
 				_content |= ModContent.CardPacks;
-			if (File.Exists(path + "\\script.txt")) {
+			if (File.Exists(json.script = path + '\\' + json.script)) {
 				_content |= ModContent.Script;
-				Script   =  new Code(File.ReadAllText(path + "\\script.txt"));
+				Script   =  new Code(File.ReadAllText(json.script));
 			}
 		}
 

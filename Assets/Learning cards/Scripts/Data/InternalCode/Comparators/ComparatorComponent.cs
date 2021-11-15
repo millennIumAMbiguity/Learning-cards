@@ -4,7 +4,7 @@ namespace Learning_cards.Scripts.Data.InternalCode.Comparators
 {
 	public class ComparatorComponent : ICode
 	{
-		public string Execute(string input = null) => SExecute(input);
+		public string Execute(string input) => SExecute(input);
 
 		private string SExecute(string input)
 		{
@@ -28,6 +28,6 @@ namespace Learning_cards.Scripts.Data.InternalCode.Comparators
 			return "false";
 		}
 
-		protected virtual bool Comparer(float f1, float f2) => f1 == f2;
+		protected virtual bool Comparer(float f1, float f2) => System.Math.Abs(f1 - f2) < 0.001f;
 	}
 }

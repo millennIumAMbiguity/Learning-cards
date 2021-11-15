@@ -5,9 +5,9 @@ namespace Learning_cards.Scripts.Data.InternalCode.Math
 {
 	public class Divide : ICode
 	{
-		public string Execute(string input = null) => SExecute(input);
+		public string Execute(string input) => SExecute(input);
 
-		public static string SExecute(string input = null)
+		public static string SExecute(string input)
 		{
 			if (input is null) return "0";
 			string[] arguments   = input.Split(',');

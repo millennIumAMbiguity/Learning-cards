@@ -5,6 +5,7 @@ using Learning_cards.Scripts.Data.InternalCode.Comparators;
 using Learning_cards.Scripts.Data.InternalCode.Math;
 using Learning_cards.Scripts.Mods;
 using Learning_cards.Scripts.Mods.Mod;
+using PlasticPipe.PlasticProtocol.Messages;
 
 namespace Learning_cards.Scripts.Data
 {
@@ -52,6 +53,8 @@ namespace Learning_cards.Scripts.Data
 			DCode.Add("GreaterOrEqual", new Function {Code = new GreaterOrEqual()});
 			DCode.Add("Less", new Function {Code           = new Less()});
 			DCode.Add("LessOrEqual", new Function {Code    = new LessOrEqual()});
+			
+			DCode.Add("Msg", new Function {Code = new Msg()});
 
 			//Add internal code to LCode
 			foreach (var code in DCode)
@@ -59,6 +62,7 @@ namespace Learning_cards.Scripts.Data
 
 #endregion
 
+			//load mods into dictionaries
 			foreach (Mod activeMod in LoadMods.ActiveMods) {
 				activeMod.GetFunctions(ref DCode, ref LCode);
 				activeMod.GetCharacters(ref DCharacters, ref LCharacter);
@@ -88,6 +92,8 @@ namespace Learning_cards.Scripts.Data
 
 
 #region staticFuntions
+
+		public static void AddNewPlayer(Character character) => AddNewPlayer(new Player(character));
 
 		public static void AddNewPlayer(Player player)
         {
