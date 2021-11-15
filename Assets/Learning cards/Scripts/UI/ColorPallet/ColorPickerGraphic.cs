@@ -9,7 +9,7 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 		[SerializeField] private Graphic target;
 		[SerializeField] private int     colorId;
 
-		private void Awake()
+		private void Start()
 		{
 			if (this.enabled) UpdateColor();
 		}

@@ -9,7 +9,7 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 		[SerializeField] private Selectable target;
 		[SerializeField] private int    normalColor = 0, selectedColor = 0, pressedColor = 4, highlightedColor = 3, disabledColor = 0;
 
-		private void Awake()
+		private void Start()
 		{
 			if (this.enabled) UpdateColor();
 		}

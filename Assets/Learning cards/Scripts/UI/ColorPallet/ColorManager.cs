@@ -16,7 +16,7 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 
 		[SerializeField] private SOColorPallet pallet;
 
-		private ColorManager() { RefreshColor(); }
+		private void Awake() { RefreshColor(); }
 
 		public void RefreshColor()
 		{
@@ -36,9 +36,11 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 				(target as ColorManager).RefreshColor();
 				var colorPickers = Resources.FindObjectsOfTypeAll<ColorPickerGraphic>();
 				foreach (var colorPicker in colorPickers) { colorPicker.UpdateColor(); }
-			}
-
-			base.OnInspectorGUI();
+				base.OnInspectorGUI();
+				if (Application.isPlaying) return;
+				EditorApplication.QueuePlayerLoopUpdate();
+				SceneView.RepaintAll();
+			} else base.OnInspectorGUI();
 		}
 	}
 }
