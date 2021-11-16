@@ -7,10 +7,10 @@ namespace Learning_cards.Scripts.Parse
 {
 	public static partial class Parse
 	{
-		private const string InvalidSetTypeErrorMsg   = "\"{0}\" was not recognized as a valid set action.";
-		private const string InvalidSetTypeValidSets1 = "\nValid set actions are: \"=\", \"+=\", and \"-=\".";
-		private const string InvalidSetTypeValidSets2 = "\nValid set actions are: \"=\" and \"+=\".";
-		private const string InvalidSetTypeValidSets3 = "\nValid set actions are: \"=\".";
+		public const string InvalidSetTypeErrorMsg   = "\"{0}\" was not recognized as a valid set action.";
+		public const string InvalidSetTypeValidSets1 = "\nValid set actions are: \"=\", \"+=\", and \"-=\".";
+		public const string InvalidSetTypeValidSets2 = "\nValid set actions are: \"=\" and \"+=\".";
+		public const string InvalidSetTypeValidSets3 = "\nValid set actions are: \"=\".";
 		
 		private const string InvalidAttributeErrorMsg = "\"{0}\" was not recognized as a valid attribute.";
 		

@@ -22,7 +22,7 @@ namespace Learning_cards.Scripts.UI.XML
 		private static UIXmlDesigner _instance;
 
 		public static List<GameObject> Layouts    = new List<GameObject>();
-		public static GameObject[]     UIElements = Array.Empty<GameObject>();
+		public static XmlLayout[]      UIElements = Array.Empty<XmlLayout>();
 
 		public static int SetUIElements(GameObject element)
 		{
@@ -31,12 +31,24 @@ namespace Learning_cards.Scripts.UI.XML
 			Array.Resize(ref UIElements, i+2);
 			ret:
 			element.SetActive(true);
-			UIElements[i] = element;
+			UIElements[i] = element.GetComponent<XmlLayout>();
 			return i;
+		}
+		public static int SetUIElements(GameObject element, int id)
+		{
+			element.SetActive(true);
+			UIElements[id] = element.GetComponent<XmlLayout>();
+			return id;
 		}
 		public static int NewUIElement(int layoutId)
 		{
 			if (Layouts.Count > layoutId) return NewUIElement(Layouts[layoutId]);
+			MessageHandler.ShowError("Layout with id " + layoutId + " not found");
+			return -1;
+		}
+		public static int NewUIElement(int layoutId, int id)
+		{
+			if (Layouts.Count > layoutId) return NewUIElement(Layouts[layoutId], id);
 			MessageHandler.ShowError("Layout with id " + layoutId + " not found");
 			return -1;
 		}
@@ -48,12 +60,26 @@ namespace Learning_cards.Scripts.UI.XML
 			MessageHandler.ShowError("Layout " + layoutName + " not found");
 			return -1;
 		}
+		public static int NewUIElement(string layoutName, int id)
+		{
+			var layout = Layouts.FirstOrDefault(x => x.name == layoutName);
+			if (layout != null) return NewUIElement(layout, id);
+			MessageHandler.ShowError("Layout " + layoutName + " not found");
+			return -1;
+		}
 
 		static int NewUIElement(GameObject layout) 
 		{
 			var newElement = Instantiate(layout, _instance.transform);
 			newElement.name = "UIElement "+ UIElements.Length + ": " + layout.name;
 			return SetUIElements(newElement);
+		}
+		
+		static int NewUIElement(GameObject layout, int id) 
+		{
+			var newElement = Instantiate(layout, _instance.transform);
+			newElement.name = "UIElement "+ UIElements.Length + ": " + layout.name;
+			return SetUIElements(newElement, id);
 		}
 
 		private void Awake()
@@ -62,14 +88,13 @@ namespace Learning_cards.Scripts.UI.XML
 			foreach (var mod in LoadMods.ActiveMods) 
 				if (File.Exists(mod.Xml)) LoadLayout(mod.Xml);
 
-			//NewUIElement(0);
+			NewUIElement(0);
 		}
 
 		private void OnDestroy()
 		{
-			XmlLayout.Layouts.Clear();
 			Layouts.Clear();
-			UIElements = Array.Empty<GameObject>();
+			UIElements = Array.Empty<XmlLayout>();
 		}
 
 		private void LoadLayout(string path)

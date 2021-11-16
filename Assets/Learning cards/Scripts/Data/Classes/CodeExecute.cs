@@ -28,8 +28,7 @@ namespace Learning_cards.Scripts.Data.Classes
 					case "goto": {
 						//protects against indefinite loops.
 						if (loopCount++ > 1_000_000) {
-							MessageHandler.ShowMessage(
-								"<size=+6><b><color=red>ERROR:</color></b><size=-6>\ngoto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
+							MessageHandler.ShowError("goto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
 							return "NaN";
 						}
 
@@ -54,18 +53,22 @@ namespace Learning_cards.Scripts.Data.Classes
 						}
 
 						gotoIsNotNumber:
-						MessageHandler.ShowMessage(
-							$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\n\"{target}\" not recognised as a goto point.");
+						MessageHandler.ShowError($"\"{target}\" not recognised as a goto point.");
 						return "NaN";
 					}
 					default:
-						SetVar(newRow);
+						SetVar(newRow, words);
 						break;
 				}
 			}
 
 			return default;
 		}
+
+//split functions and arguments.
+//hello + world(word1, add(1, add(2, 3))); ->
+//{ "hello + ", "world", "word1, ", "add(1, add(2, 3))", ";" }
+//and then runs internal functions.
 
 		private static string RunFunctions(string row)
 		{
