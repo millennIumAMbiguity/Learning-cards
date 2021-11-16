@@ -1,6 +1,4 @@
 # Learning Cards
-
----
 Learning cards are essentially a mod-loader for an empty game.
 In other words, a game engine.
 This game engine is primarily made to make card games, but it can be used for other purposes.
