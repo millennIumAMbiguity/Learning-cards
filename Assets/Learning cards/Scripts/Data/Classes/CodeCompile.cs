@@ -48,31 +48,15 @@ namespace Learning_cards.Scripts.Data.Classes
 					newRowId++;
 					stringBuilder.Append(trimmedRow + ";");
 				} else {
-					for (int i = 2; i < wordsInRow.Count; i++) {
-						switch (wordsInRow[i]) {
-							//if (wordsInRow.Length < i + 1) break;
-							case "+":
-								wordsInRow[i - 1] = "Add(" + wordsInRow[i - 1];
-								goto Ending;
-							case "-":
-								wordsInRow[i - 1] = "Subtract(" + wordsInRow[i - 1];
-								goto Ending;
-							case "*":
-								wordsInRow[i - 1] = "Multiply(" + wordsInRow[i - 1];
-								goto Ending;
-							case "/":
-								wordsInRow[i - 1] = "Divide(" + wordsInRow[i - 1];
-								goto Ending;
-							default:
-								continue;
-						}
+					FormatMath(
+						ref wordsInRow, new[]
+							{ "*", "/" }, new[]
+							{ "Multiply", "Divide" });
 
-						Ending:
-						wordsInRow[i - 1] += ",";
-						wordsInRow[i + 1] += ")";
-						wordsInRow.RemoveAt(i);
-						i++;
-					}
+					FormatMath(
+						ref wordsInRow, new[]
+							{ "+", "-" }, new[]
+							{ "Add", "Subtract" });
 
 					stringBuilder.Append(string.Join(" ", wordsInRow));
 				}
@@ -98,6 +82,21 @@ namespace Learning_cards.Scripts.Data.Classes
 
 			_compiledCode = stringBuilder.ToString();
 			_isCompiled   = true;
+
+			static void FormatMath(ref List<string> words, string[] mathSymbol, string[] mathFunctionName)
+			{
+				for (int wordId = 2; wordId < words.Count - 1; wordId++) {
+					string word = words[wordId];
+					for (int i = 0; i < mathSymbol.Length; i++) {
+						if (word != mathSymbol[i]) continue;
+						words[wordId - 1] = $"{mathFunctionName[i]}({words[wordId - 1]}, {words[wordId + 1]})";
+						words.RemoveAt(wordId + 1);
+						words.RemoveAt(wordId);
+						wordId -= 2;
+						break;
+					}
+				}
+			}
 		}
 	}
 }

@@ -28,7 +28,8 @@ namespace Learning_cards.Scripts.Data.Classes
 					case "goto": {
 						//protects against indefinite loops.
 						if (loopCount++ > 1_000_000) {
-							MessageHandler.ShowError("goto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
+							MessageHandler.ShowError(
+								"goto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
 							return "NaN";
 						}
 
@@ -104,7 +105,9 @@ namespace Learning_cards.Scripts.Data.Classes
 								break;
 							case 1:
 								functionContentOfChild = "";
-								functionContent        = functionContent.Substring(0, functionNameOfChild.Length - 1);
+								functionContent = functionContent.Substring(
+									0,
+									functionContent.Length - functionNameOfChild.Length);
 								break;
 							default:
 								functionContentOfChild += '(';

@@ -41,5 +41,15 @@ namespace Learning_cards.Tests.EditMode
 		public void CompileAddInFunc() => Assert.AreEqual(
 			"players[0].hp += Add(1, Add(1, 1))",
 			new Code("player.hp += Add(1, 1 + 1);").CompiledCode);
+		
+		[Test]
+		public void CompileDoubleAdd() => Assert.AreEqual(
+			"players[0].hp += Add(Add(1, 1), 1)",
+			new Code("player.hp += 1 + 1 + 1;").CompiledCode);
+		
+		[Test]
+		public void CompileAddMultOrder() => Assert.AreEqual(
+			"players[0].hp += Add(1, Multiply(1, 1))",
+			new Code("player.hp += 1 + 1 * 1;").CompiledCode);
 	}
 }

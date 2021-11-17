@@ -15,14 +15,21 @@ namespace Learning_cards.Tests.EditMode
 		public void CallAddFromCode()
 		{
 			Dictionaries.Load();
-			Assert.AreEqual(2, float.Parse(new Code("return Add(1, 1);").Execute()));
+			Assert.AreEqual("2", new Code("return Add(1, 1);").Execute());
 		}
 
 		[Test]
 		public void Return1P1()
 		{
 			Dictionaries.Load();
-			Assert.AreEqual(2, float.Parse(new Code("return 1 + 1;").Execute()));
+			Assert.AreEqual("2", new Code("return 1 + 1;").Execute());
+		}
+		
+		[Test]
+		public void ReturnTripleAdd()
+		{
+			Dictionaries.Load();
+			Assert.AreEqual("3", new Code("return 1 + 1 + 1;").Execute());
 		}
 	}
 }
