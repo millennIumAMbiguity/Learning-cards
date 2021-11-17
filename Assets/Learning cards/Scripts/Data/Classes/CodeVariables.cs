@@ -12,14 +12,21 @@ namespace Learning_cards.Scripts.Data.Classes
 	{
 		private static string GetVars(string s)
 		{
-			string[] arr                                                = s.Split(' ');
-			for (int index = 0; index < arr.Length; index++) arr[index] = GetVar(arr[index]);
-			return string.Join(" ", arr);
+			bool isVar = false;
+			string[] arr = s.Split(' ');
+			for (int index = 0; index < arr.Length; index++) {
+				if (!IsVar(s)) continue;
+				isVar      = true;
+				arr[index] = GetVarUnsafe(arr[index]);
+			}
+
+			return isVar ? string.Join(" ", arr) : s;
 		}
 
-		private static string GetVar(string s)
+		private static bool   IsVar(string  s) => s[0] == '$';
+		private static string GetVar(string s) => IsVar(s) ? GetVarUnsafe(s) : s;
+		private static string GetVarUnsafe(string s)
 		{
-			if (s[0] != '$') return s;
 			s = s.Substring(1);
 			string[] spit;
 
@@ -29,7 +36,7 @@ namespace Learning_cards.Scripts.Data.Classes
 
 			//get object variable
 			switch (GetId(spit[0], out int id)) {
-				case "players": 
+				case "players":
 					return Dictionaries.Players[id].ParseGet(spit[1]);
 				default:
 					MessageHandler.ShowError(
@@ -49,23 +56,20 @@ namespace Learning_cards.Scripts.Data.Classes
 			if (!target[0].Contains('[')) {
 				//set Global variable
 				if (target.Length == 1) {
-					Dictionaries.DGlobalVariables.ParseDictionary(words[0], deltaValue,words[1]);
+					Dictionaries.DGlobalVariables.ParseDictionary(words[0], deltaValue, words[1]);
 					return;
 				}
 
 				switch (target[0]) {
-					case "players": {
-						break;
-					}
-					case "layout": {
-						break;
-					}
+					case "players": { break; }
+					case "layout":  { break; }
 					default: {
-                        MessageHandler.ShowError(
-                            $"\"{target[0]}\" was not recognised as a target class in:\n{newRow}");
-                        return;
-                    }
+						MessageHandler.ShowError(
+							$"\"{target[0]}\" was not recognised as a target class in:\n{newRow}");
+						return;
+					}
 				}
+
 				return;
 			}
 
@@ -80,19 +84,19 @@ namespace Learning_cards.Scripts.Data.Classes
 				case "layout": {
 					if (target.Length == 1) {
 						if (words[1] == "=") {
-							if (UIXmlDesigner.UIElements[id] is { }) {
-								UIXmlDesigner.UIElements[id].Destroy();
-							}
+							if (UIXmlDesigner.UIElements[id] is { }) { UIXmlDesigner.UIElements[id].Destroy(); }
 
-							if (int.TryParse(deltaValue, out int LayoutId)) 
+							if (int.TryParse(deltaValue, out int LayoutId))
 								UIXmlDesigner.NewUIElement(LayoutId, id);
-							else 
+							else
 								UIXmlDesigner.NewUIElement(deltaValue, id);
-							
 						} else {
-							MessageHandler.ShowError(string.Format(Parse.Parse.InvalidSetTypeErrorMsg, words[1]) + Parse.Parse.InvalidSetTypeValidSets3);
+							MessageHandler.ShowError(
+								string.Format(Parse.Parse.InvalidSetTypeErrorMsg, words[1]) +
+								Parse.Parse.InvalidSetTypeValidSets3);
 						}
 					}
+
 					break;
 				}
 				default:

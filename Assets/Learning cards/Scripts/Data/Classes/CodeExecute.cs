@@ -24,7 +24,7 @@ namespace Learning_cards.Scripts.Data.Classes
 					case "NaN":
 						continue;
 					case "return":
-						return newRow.Substring(7);
+						return GetVars(newRow.Substring(7));
 					case "goto": {
 						//protects against indefinite loops.
 						if (loopCount++ > 1_000_000) {

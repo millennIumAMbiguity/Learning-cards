@@ -144,12 +144,11 @@ namespace Learning_cards.Tests.EditMode
 		public void IfStatementGotoTest([Values("false", "true")] string input1)
 		{
 			Dictionaries.Load();
-			new Code(
+			Assert.AreEqual(bool.Parse(input1) ? "5" : "10", new Code(
 				"my_var = 5;" +
 				$"If({input1}, goto 4);" +
 				"my_var = 10;" +
-				"return;").Execute();
-			Assert.AreEqual(bool.Parse(input1) ? 5 : 10, float.Parse(Dictionaries.DGlobalVariables["my_var"]));
+				"return $my_var;").Execute());
 		}
 
 		[Test]
