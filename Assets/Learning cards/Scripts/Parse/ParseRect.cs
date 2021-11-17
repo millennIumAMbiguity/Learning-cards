@@ -127,9 +127,7 @@ namespace Learning_cards.Scripts.Parse
 			rect.localPosition = pos;
 			rect.localScale    = scale;
 			rect.localRotation = Quaternion.Euler(rot);
-			//rect.sizeDelta     = size;
-			rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
-			rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
+			rect.sizeDelta     = size;
 		}
 	}
 }
