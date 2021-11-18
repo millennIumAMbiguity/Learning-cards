@@ -72,7 +72,7 @@ namespace Learning_cards.Scripts.UI
 			}
 
 			if (OnlyCompile) {
-				_newMessage += new Code(args.Last()).CompiledCode;
+				_newMessage += new Code(args.Last()).CompiledCode + "\n";
 			} else {
 				string output = new Code(args.Last()).Execute(argument);
 				if (output != "" && output != "NaN")

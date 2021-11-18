@@ -11,12 +11,18 @@ namespace Learning_cards.Scripts.Data.InternalCode.Math
 		{
 			if (input is null) return "0";
 			string[] arguments   = input.Split(',');
-			float    returnValue = 0;
-			foreach (string argument in arguments)
-				if (float.TryParse(argument, out float result)) returnValue -= result;
+			
+			if (!float.TryParse(arguments[0], out float returnValue)) {
+				MessageHandler.ShowError($"Failed to convert {arguments[0]} to type float.\nSubtract({input})");
+				return "NaN";
+			}
+
+			for (int index = 1; index < arguments.Length; index++) {
+				if (float.TryParse(arguments[index], out float result)) returnValue -= result;
 				else
-					MessageHandler.ShowMessage(
-						$"<size=+6><b><color=red>ERROR:</color></b><size=-6>\nFailed to convert {argument} to type float.\nAdd( {input} )");
+					MessageHandler.ShowError(
+						$"Failed to convert {arguments[index]} to type float.\nSubtract({input})");
+			}
 
 			return returnValue.ToString();
 		}

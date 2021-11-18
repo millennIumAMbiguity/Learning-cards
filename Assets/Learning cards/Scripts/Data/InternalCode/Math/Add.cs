@@ -9,7 +9,7 @@ namespace Learning_cards.Scripts.Data.InternalCode.Math
 
 		public static string SExecute(string input)
 		{
-			if (input is null) return "0";
+			if (input is null) return "NaN";
 			string[] arguments   = input.Split(',');
 			float    returnValue = 0;
 			foreach (string argument in arguments)
