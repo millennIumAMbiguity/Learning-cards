@@ -5,6 +5,7 @@ using Learning_cards.Scripts.Data.InternalCode.Comparators;
 using Learning_cards.Scripts.Data.InternalCode.Math;
 using Learning_cards.Scripts.Mods;
 using Learning_cards.Scripts.Mods.Mod;
+using Learning_cards.Scripts.UI.Messages;
 using PlasticPipe.PlasticProtocol.Messages;
 
 namespace Learning_cards.Scripts.Data
@@ -79,14 +80,37 @@ namespace Learning_cards.Scripts.Data
 		}
 
 		public static Character Character(int    id)   => LCharacter.Count > id ? LCharacter[id] : null;
-		public static Character Character(string name) => DCharacters[name];
+
+		public static Character Character(string name)
+		{
+			if (DCharacters.TryGetValue(name, out var character)) 
+				return character;
+			
+			MessageHandler.ShowMessage("Character \"" + name + "\" not found!");
+			return null;
+		}
 
 		public static Card Card(int id) => LCards.Count > id ? LCards[id] : null;
 
-		public static Card Card(string name) => DCards[name];
+		public static Card Card(string name)
+		{
+			if (DCards.TryGetValue(name, out var card)) 
+				return card;
+			
+			MessageHandler.ShowMessage("Card \"" + name + "\"not found!");
+			return null;
+		}
 
 		public static ICode    Code(int    id)   => LCode.Count > id ? LCode[id] : null;
-		public static Function Code(string name) => DCode[name];
+
+		public static Function Code(string name)
+		{
+			if (DCode.TryGetValue(name, out var function)) 
+				return function;
+			
+			MessageHandler.ShowError("Function \"" + name + "\" not found.");
+			return null;
+		}
 
 		public static string GlobalVariables(string name) => DGlobalVariables[name];
 

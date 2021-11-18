@@ -120,14 +120,14 @@ namespace Learning_cards.Scripts.Data.Classes
 						depth--;
 						switch (depth) {
 							case 0:
-								newRow       += Dictionaries.Code(functionName).Code.Execute(GetVar(functionContent));
+								newRow       += Dictionaries.Code(functionName)?.Code.Execute(GetVar(functionContent));
 								functionName =  "";
 								break;
 							case 1:
 								//if function in depth 1 contains function, call RunFunctions()
 								if (functionContentOfChild.Contains('('))
 									functionContentOfChild = RunFunctions(functionContentOfChild);
-								functionContent += Dictionaries.Code(functionNameOfChild).Code
+								functionContent += Dictionaries.Code(functionNameOfChild)?.Code
 															   .Execute(GetVar(functionContentOfChild));
 								break;
 							default:
