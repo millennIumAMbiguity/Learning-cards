@@ -8,6 +8,7 @@ namespace Learning_cards.Scripts.UI.Messages
 		private static           MessageHandler _messageHandler;
 		public static            int            ActiveMessageWindows;
 		[SerializeField] private GameObject     messageBoxPrefab;
+		[SerializeField] private Terminal       log;
 		[SerializeField] private int            messageOffset          = 15;
 		[SerializeField] private int            messageContainmentSize = 25;
 
@@ -29,9 +30,11 @@ namespace Learning_cards.Scripts.UI.Messages
 
 		public static void ShowMessage(string text)
 		{
+			if (text == "" || text == "NaN") return;
+			
 			//When in the editor, use Debug.Log instead of MessageHandler
 			#if UNITY_EDITOR
-			if (!Application.isPlaying) {
+			if (!Application.isPlaying || _messageHandler.log) {
 				bool     isError   = false;
 				bool     isWarning = false;
 				string   newText   = "";
@@ -41,17 +44,56 @@ namespace Learning_cards.Scripts.UI.Messages
 					if ((i & 1) == 0) {
 						if (s[i] == "") continue;
 						if (!isError) {
-							if (s[i].Substring(0, 6).ToUpper() == "ERROR:") isError                   = true;
+							if (s[i].Length < 6) {
+								newText += s[i];
+								continue;
+							}
+							if (s[i].Substring(0, 6).ToUpper() == "ERROR:") isError = true;
+							if (s[i].Length < 8) {
+								newText += s[i];
+								continue;
+							}
 							if (!isWarning && s[i].Substring(0, 8).ToUpper() == "WARNING:") isWarning = true;
 						}
 
 						newText += s[i];
 					} else if (s[i] != "" && s[i].Split('=')[0] != "size") newText += '<' + s[i] + '>';
 
+				if (_messageHandler.log)
+					_messageHandler.log.Log(newText);
+
 				if (isError) Debug.LogError(newText);
 				else if (isWarning) Debug.LogWarning(newText);
 				else Debug.Log(newText);
-				return;
+				if (!Application.isPlaying) return;
+			}
+			#else
+			if (_messageHandler.log) {
+				bool     isError = false;
+				bool     isWarning = false;
+				string   newText = "";
+				string[] s = text.Split('<', '>');
+				//remove formatting
+				for (int i = 0; i < s.Length; i++)
+					if ((i & 1) == 0) {
+						if (s[i] == "") continue;
+						if (!isError) {
+							if (s[i].Length < 6) {
+								newText += s[i];
+								continue;
+							}
+							if (s[i].Substring(0, 6).ToUpper() == "ERROR:") isError = true;
+							if (s[i].Length < 8) {
+								newText += s[i];
+								continue;
+							}
+							if (!isWarning && s[i].Substring(0, 8).ToUpper() == "WARNING:") isWarning = true;
+						}
+
+						newText += s[i];
+					} else if (s[i] != "" && s[i].Split('=')[0] != "size") newText += '<' + s[i] + '>';
+
+				_messageHandler.log.Log(newText);
 			}
 			#endif
 

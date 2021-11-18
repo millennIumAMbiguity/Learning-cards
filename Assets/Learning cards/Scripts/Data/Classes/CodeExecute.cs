@@ -63,7 +63,7 @@ namespace Learning_cards.Scripts.Data.Classes
 				}
 			}
 
-			return default;
+			return "NaN";
 		}
 
 //split functions and arguments.

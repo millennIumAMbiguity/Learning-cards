@@ -1,5 +1,5 @@
-<layout name="BaseCard" type="card" 
-width="300" height="150">
+<layout name="BaseCard" type="card"
+        width="300" height="150">
     <fill color="#C8C8C8"/>
     <outline color="#000000" width="2"/>
     <rect anchorsMinX="0" anchorsMinY="0" anchorsMaxX="1" anchorsMaxY="1" width="0" height="0">

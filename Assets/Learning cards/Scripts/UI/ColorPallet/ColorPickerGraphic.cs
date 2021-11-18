@@ -1,22 +1,19 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Learning_cards.Scripts.UI.ColorPallet
 {
-	public class ColorPickerGraphic : MonoBehaviour
+	public class ColorPickerGraphic : ColorPicker
 	{
 		[SerializeField] private Graphic target;
 		[SerializeField] private int     colorId;
 
-		private void Start()
-		{
-			if (this.enabled) UpdateColor();
-		}
-
-		public void UpdateColor()
+		public override void UpdateColor()
 		{
 			target.color = ColorManager.PalletColors[colorId];
+			EditorUtility.SetDirty(target);
 		}
 	}
 }

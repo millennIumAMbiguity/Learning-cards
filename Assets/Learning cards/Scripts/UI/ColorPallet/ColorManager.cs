@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Learning_cards.Scripts.UI.ColorPallet
@@ -33,14 +34,19 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 		public override void OnInspectorGUI()
 		{
 			if (GUILayout.Button("Update all in scene")) {
-				(target as ColorManager).RefreshColor();
-				var colorPickers = Resources.FindObjectsOfTypeAll<ColorPickerGraphic>();
-				foreach (var colorPicker in colorPickers) { colorPicker.UpdateColor(); }
-				base.OnInspectorGUI();
+				ColorManager cm = target as ColorManager;
+				if (!cm) {
+					base.OnInspectorGUI();
+					return;
+				}
+				cm.RefreshColor();
+				var colorPickers = Resources.FindObjectsOfTypeAll<ColorPicker>();
+				foreach (var colorPicker in colorPickers) colorPicker.UpdateColor();
 				if (Application.isPlaying) return;
 				EditorApplication.QueuePlayerLoopUpdate();
-				SceneView.RepaintAll();
-			} else base.OnInspectorGUI();
+				EditorSceneManager.MarkSceneDirty(cm.gameObject.scene);
+			} 
+			base.OnInspectorGUI();
 		}
 	}
 }
