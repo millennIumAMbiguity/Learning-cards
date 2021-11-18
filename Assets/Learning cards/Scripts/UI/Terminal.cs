@@ -41,6 +41,7 @@ namespace Learning_cards.Scripts.UI
 			foreach (var arg in args) {
 				string[] trimmed = arg.Trim().ToLower().Split(':');
 				switch (trimmed[0].Trim()) {
+					case "path":
 					case "file": {
 						if (!File.Exists(args[args.Length - 1])) {
 							MessageHandler.ShowError("Target file not found.");
@@ -54,7 +55,7 @@ namespace Learning_cards.Scripts.UI
 					case "argument":
 					case "arguments": {
 						if (args.Length < 2) {
-                            MessageHandler.ShowError("No arguments specified.");
+                            MessageHandler.ShowError("No sub-arguments specified.");
                             goto End;
                         }
 						argument = trimmed[1].Trim();
