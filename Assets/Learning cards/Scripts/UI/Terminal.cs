@@ -87,7 +87,7 @@ namespace Learning_cards.Scripts.UI
 		}
 		private void Update()
 		{
-			if (!Input.GetKeyDown(KeyCode.Return)) return;
+			if (!Input.GetKeyDown(KeyCode.Return) || !inputField.isFocused) return;
 			Execute(inputField.text, true);
 			inputField.text = "";
 			inputField.ActivateInputField();
