@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Learning_cards.Scripts.UI.Messages;
+using UnityEngine;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
@@ -27,13 +29,13 @@ namespace Learning_cards.Scripts.Data.Classes
 						return GetVars(newRow.Substring(7));
 					case "goto": {
 						//protects against indefinite loops.
-						if (loopCount++ > 1_000_000) {
+						if (loopCount++ > 10_000) {
 							MessageHandler.ShowError(
-								"goto was used over a million times.\nAssuming its a dead loop, the execution have stopped.");
+								"goto was used over 10 000 times.\nAssuming its a dead loop, the execution have stopped.");
 							return "NaN";
 						}
 
-						string target = newRow.Substring(5);
+						string target = GetVar(newRow.Substring(5));
 						string symbol = target.Substring(0, 1);
 						switch (symbol) {
 							case "+": {
@@ -44,11 +46,13 @@ namespace Learning_cards.Scripts.Data.Classes
 							case "-": {
 								if (!int.TryParse(target.Substring(1), out int res)) goto gotoIsNotNumber;
 								index -= res + 1;
+								if (index < -1) index = -1;
 								continue;
 							}
 							default: {
 								if (!int.TryParse(target, out int res)) goto gotoIsNotNumber;
-								index = res - 2;
+								if (res == 0) index = -1;
+								else index = res - 2;
 								continue;
 							}
 						}
@@ -120,15 +124,23 @@ namespace Learning_cards.Scripts.Data.Classes
 						depth--;
 						switch (depth) {
 							case 0:
-								newRow       += Dictionaries.Code(functionName)?.Code.Execute(GetVar(functionContent));
+								string[] functionContentArgs = functionContent.Split(',');
+								for (int i = 0; i < functionContentArgs.Length; i++)
+									functionContentArgs[i] = GetVar(functionContentArgs[i].TrimStart(' '));
+								functionContent = string.Join(", ", functionContentArgs);
+ 								newRow       += Dictionaries.Code(functionName)?.Code.Execute(GetVar(functionContent));
 								functionName =  "";
 								break;
 							case 1:
 								//if function in depth 1 contains function, call RunFunctions()
 								if (functionContentOfChild.Contains('('))
 									functionContentOfChild = RunFunctions(functionContentOfChild);
+								string[] functionContentOfChildArgs = functionContentOfChild.Split(',');
+								for (int i = 0; i < functionContentOfChildArgs.Length; i++) 
+									functionContentOfChildArgs[i] = GetVar(functionContentOfChildArgs[i].TrimStart(' '));
+								functionContentOfChild = string.Join(", ", functionContentOfChildArgs);
 								functionContent += Dictionaries.Code(functionNameOfChild)?.Code
-															   .Execute(GetVar(functionContentOfChild));
+															   .Execute(functionContentOfChild);
 								break;
 							default:
 								functionContentOfChild += ')';

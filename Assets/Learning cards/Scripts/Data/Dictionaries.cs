@@ -118,7 +118,8 @@ namespace Learning_cards.Scripts.Data
 			return null;
 		}
 
-		public static string GlobalVariables(string name) => DGlobalVariables[name];
+		public static string GlobalVariables(string name) =>
+			DGlobalVariables.TryGetValue(name, out string value) ? value : "NaN";
 
 
 #region staticFuntions

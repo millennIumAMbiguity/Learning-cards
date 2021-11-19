@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace Learning_cards.Scripts.UI.Messages
@@ -12,6 +13,8 @@ namespace Learning_cards.Scripts.UI.Messages
 		[SerializeField] private int            messageOffset          = 15;
 		[SerializeField] private int            messageContainmentSize = 25;
 
+		private static int _messageCount = 0;
+		
 		private void Awake()
 		{
 			if (PlayerPrefs.GetInt("MessageHandler", 1) == 0) return;
@@ -19,6 +22,8 @@ namespace Learning_cards.Scripts.UI.Messages
 				Debug.LogWarning("Multiple MessageHandler detected!");
 			_messageHandler = this;
 		}
+
+		private void FixedUpdate() => _messageCount = 0;
 
 		private void OnDestroy() => _messageHandler = null;
 
@@ -30,7 +35,7 @@ namespace Learning_cards.Scripts.UI.Messages
 
 		public static void ShowMessage(string text)
 		{
-			if (text == "" || text == "NaN") return;
+			if (_messageCount++ > 16 || text == "" || text == "NaN") return;
 			
 			//When in the editor, use Debug.Log instead of MessageHandler
 			#if UNITY_EDITOR

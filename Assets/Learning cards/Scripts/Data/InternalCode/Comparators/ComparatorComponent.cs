@@ -1,4 +1,5 @@
 ﻿using Learning_cards.Scripts.Data.Classes;
+using Learning_cards.Scripts.UI.Messages;
 
 namespace Learning_cards.Scripts.Data.InternalCode.Comparators
 {
@@ -11,21 +12,22 @@ namespace Learning_cards.Scripts.Data.InternalCode.Comparators
 			string[] arguments = input.Split(',');
 			float[]  floatArgs = new float[arguments.Length];
 
+			if (arguments.Length != 2) {
+				MessageHandler.ShowError($"Unexpected amount of arguments. expected 2, received {arguments.Length}.");
+				return "Nan";
+			}
+			
 			//convert to numbers
-			for (int i = 0; i < arguments.Length; i++)
+			for (int i = 0; i < 2; i++)
 				if (float.TryParse(arguments[i], out float result)) floatArgs[i] = result;
 				//if any numbers are not a number, use the string lenght instead.
 				else {
-					for (i = 0; i < arguments.Length; i++)
-						floatArgs[i] = arguments[i].Trim().Length;
+					for (int k = 0; k < 2; k++)
+						floatArgs[k] = arguments[k].Trim().Length;
 					break;
 				}
-
-			for (int i = 1; i < arguments.Length; i++)
-				if (Comparer(floatArgs[i - 1], floatArgs[i]))
-					return "true";
-
-			return "false";
+			
+			return Comparer(floatArgs[0], floatArgs[1]) ? "true" : "false";
 		}
 
 		protected virtual bool Comparer(float f1, float f2) => System.Math.Abs(f1 - f2) < 0.001f;

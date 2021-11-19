@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace Learning_cards.Scripts.Data.Classes
 {
@@ -15,7 +16,7 @@ namespace Learning_cards.Scripts.Data.Classes
 			string[] rows          = SourceCode.Replace("return;", "return NaN;").Split(';');
 
 			foreach (string row in rows) {
-				string trimmedRow = row.Trim();
+				string trimmedRow = row.Replace("\n", " ").Replace("\r", " ").Trim();
 				if (trimmedRow == "") continue;
 				trimmedRow = trimmedRow.Replace("player.", "players[0].").Replace("opponent.", "players[1]")
 									   .Replace(" (", "(").Replace("if(", "If(");
