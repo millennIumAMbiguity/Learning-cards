@@ -27,17 +27,18 @@ namespace Learning_cards.Scripts.UI
 			else
 				text.text += message + "\n";
         }
-		
-		private void Update()
+
+		private void Start() => inputField.ActivateInputField();
+
+		public void Execute(string code, bool logInput = false)
 		{
-			if (!Input.GetKeyDown(KeyCode.Return)) return;
 			_isExecuting = true;
 			Dictionaries.Load();
-			_newMessage = $"<color=green>></color>{inputField.text}\n";
+			_newMessage = logInput ? $"<color=green>></color>{code}\n" : "";
 
 			string   argument    = "terminal";
 			bool     OnlyCompile = false;
-			string[] args        = inputField.text.Split('|');
+			string[] args        = code.Split('|');
 			foreach (var arg in args) {
 				string[] trimmed = arg.Trim().ToLower().Split(':');
 				switch (trimmed[0].Trim()) {
@@ -55,9 +56,9 @@ namespace Learning_cards.Scripts.UI
 					case "argument":
 					case "arguments": {
 						if (args.Length < 2) {
-                            MessageHandler.ShowError("No sub-arguments specified.");
-                            goto End;
-                        }
+							MessageHandler.ShowError("No sub-arguments specified.");
+							goto End;
+						}
 						argument = trimmed[1].Trim();
 						break;
 					}
@@ -76,14 +77,19 @@ namespace Learning_cards.Scripts.UI
 			} else {
 				string output = new Code(args.Last()).Execute(argument);
 				if (output != "" && output != "NaN")
-					_newMessage  += $"<color=green>Output: </color>{output}\n";
+					_newMessage += $"<color=green>Output: </color>{output}\n";
 			}
 			
 			End:
-			text.text += _newMessage;
-			inputField.text = "";
-			_isExecuting    = false;
+			text.text    += _newMessage;
+			_isExecuting =  false;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup);
+		}
+		private void Update()
+		{
+			if (!Input.GetKeyDown(KeyCode.Return)) return;
+			Execute(inputField.text, true);
+			inputField.text = "";
 			inputField.ActivateInputField();
 		}
 
