@@ -85,9 +85,9 @@ namespace Learning_cards.Scripts.UI
 			_isExecuting =  false;
 			LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup);
 		}
-		private void Update()
+		public void UpdateIfEnter()
 		{
-			if (!Input.GetKeyDown(KeyCode.Return) || !inputField.isFocused) return;
+			if (!Input.GetKeyDown(KeyCode.Return)) return;
 			Execute(inputField.text, true);
 			inputField.text = "";
 			inputField.ActivateInputField();

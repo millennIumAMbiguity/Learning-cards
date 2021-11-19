@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Learning_cards.Scripts.Data.Classes;
-using Unity.Plastic.Newtonsoft.Json;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Learning_cards.Scripts.Mods.Mod

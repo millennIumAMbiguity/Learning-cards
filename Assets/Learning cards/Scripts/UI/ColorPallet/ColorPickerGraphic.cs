@@ -13,7 +13,9 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 		public override void UpdateColor()
 		{
 			target.color = ColorManager.PalletColors[colorId];
+			#if UNITY_EDITOR
 			EditorUtility.SetDirty(target);
+			#endif
 		}
 	}
 }

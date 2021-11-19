@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Learning_cards.Scripts.UI.ColorPallet
@@ -27,7 +26,7 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 	}
 
 	//BaseClass[] components = Resources.FindObjectsOfTypeAll<BaseClass>();
-
+#if UNITY_EDITOR
 	[CustomEditor(typeof(ColorManager))]
 	public class ColorManagerEditor : Editor
 	{
@@ -44,9 +43,10 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 				foreach (var colorPicker in colorPickers) colorPicker.UpdateColor();
 				if (Application.isPlaying) return;
 				EditorApplication.QueuePlayerLoopUpdate();
-				EditorSceneManager.MarkSceneDirty(cm.gameObject.scene);
+				UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(cm.gameObject.scene);
 			} 
 			base.OnInspectorGUI();
 		}
 	}
+	#endif
 }

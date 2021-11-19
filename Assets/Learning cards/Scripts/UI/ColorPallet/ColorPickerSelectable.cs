@@ -20,7 +20,9 @@ namespace Learning_cards.Scripts.UI.ColorPallet
 			colors.disabledColor    = ColorManager.PalletColors[disabledColor];
 
 			target.colors      = colors;
+			#if UNITY_EDITOR
 			EditorUtility.SetDirty(target);
+			#endif
 		}
 	}
 }
