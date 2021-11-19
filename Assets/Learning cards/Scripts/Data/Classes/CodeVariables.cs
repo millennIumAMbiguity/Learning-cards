@@ -23,7 +23,7 @@ namespace Learning_cards.Scripts.Data.Classes
 			return isVar ? string.Join(" ", arr) : s;
 		}
 
-		private static bool   IsVar(string  s) => s[0] == '$';
+		private static bool   IsVar(string  s) => s != "" && s[0] == '$';
 		private static string GetVar(string s) => IsVar(s) ? GetVarUnsafe(s) : s;
 		private static string GetVarUnsafe(string s)
 		{
@@ -59,18 +59,8 @@ namespace Learning_cards.Scripts.Data.Classes
 					Dictionaries.DGlobalVariables.ParseDictionary(words[0], deltaValue, words[1]);
 					return;
 				}
-
-				switch (target[0]) {
-					case "players": { break; }
-					case "layout":  { break; }
-					default: {
-						MessageHandler.ShowError(
-							$"\"{target[0]}\" was not recognised as a target class in:\n{newRow}");
-						return;
-					}
-				}
-
-				return;
+				MessageHandler.ShowError(
+					$"\"{target[0]}\" was not recognised as a target class in:\n{newRow}");
 			}
 
 			//set variable of object

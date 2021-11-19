@@ -2,6 +2,7 @@
 using Learning_cards.Scripts.Data.Classes;
 using Learning_cards.Scripts.Data.InternalCode;
 using Learning_cards.Scripts.Data.InternalCode.Comparators;
+using Learning_cards.Scripts.Data.InternalCode.Layout;
 using Learning_cards.Scripts.Data.InternalCode.Math;
 using Learning_cards.Scripts.Mods;
 using Learning_cards.Scripts.Mods.Mod;
@@ -29,7 +30,7 @@ namespace Learning_cards.Scripts.Data
 			if (IsLoaded) return;
 
 			Players = new List<Player>();
-			
+
 			LCharacter = new List<Character>();
 			LCards     = new List<Card>();
 			LCode      = new List<ICode>();
@@ -41,21 +42,26 @@ namespace Learning_cards.Scripts.Data
 
 #region AddInternalCode
 
-			DCode.Add("If", new Function {Code = new IfStatement()});
+			DCode.Add("If", new Function { Code = new IfStatement() });
 
-			DCode.Add("Add", new Function {Code      = new Add()});
-			DCode.Add("Divide", new Function {Code   = new Divide()});
-			DCode.Add("Multiply", new Function {Code = new Multiply()});
-			DCode.Add("Subtract", new Function {Code = new Subtract()});
+			DCode.Add("Add", new Function { Code      = new Add() });
+			DCode.Add("Divide", new Function { Code   = new Divide() });
+			DCode.Add("Multiply", new Function { Code = new Multiply() });
+			DCode.Add("Subtract", new Function { Code = new Subtract() });
 
-			DCode.Add("Equals", new Function {Code         = new Equals()});
-			DCode.Add("NotEquals", new Function {Code      = new NotEquals()});
-			DCode.Add("Greater", new Function {Code        = new Greater()});
-			DCode.Add("GreaterOrEqual", new Function {Code = new GreaterOrEqual()});
-			DCode.Add("Less", new Function {Code           = new Less()});
-			DCode.Add("LessOrEqual", new Function {Code    = new LessOrEqual()});
-			
-			DCode.Add("Msg", new Function {Code = new Msg()});
+			DCode.Add("Equals", new Function { Code         = new Equals() });
+			DCode.Add("NotEquals", new Function { Code      = new NotEquals() });
+			DCode.Add("Greater", new Function { Code        = new Greater() });
+			DCode.Add("GreaterOrEqual", new Function { Code = new GreaterOrEqual() });
+			DCode.Add("Less", new Function { Code           = new Less() });
+			DCode.Add("LessOrEqual", new Function { Code    = new LessOrEqual() });
+
+			DCode.Add("Layout.Add", new Function { Code    = new LayoutAdd() });
+			DCode.Add("Layout.Remove", new Function { Code = new LayoutRemove() });
+			DCode.Add("Layout.Set", new Function { Code    = new LayoutSet() });
+			DCode.Add("Layout.Clear", new Function { Code  = new LayoutClear() });
+
+			DCode.Add("Msg", new Function { Code = new Msg() });
 
 			//Add internal code to LCode
 			foreach (var code in DCode)
@@ -79,13 +85,13 @@ namespace Learning_cards.Scripts.Data
 			*/
 		}
 
-		public static Character Character(int    id)   => LCharacter.Count > id ? LCharacter[id] : null;
+		public static Character Character(int id) => LCharacter.Count > id ? LCharacter[id] : null;
 
 		public static Character Character(string name)
 		{
-			if (DCharacters.TryGetValue(name, out var character)) 
+			if (DCharacters.TryGetValue(name, out var character))
 				return character;
-			
+
 			MessageHandler.ShowMessage("Character \"" + name + "\" not found!");
 			return null;
 		}
@@ -94,20 +100,20 @@ namespace Learning_cards.Scripts.Data
 
 		public static Card Card(string name)
 		{
-			if (DCards.TryGetValue(name, out var card)) 
+			if (DCards.TryGetValue(name, out var card))
 				return card;
-			
+
 			MessageHandler.ShowMessage("Card \"" + name + "\"not found!");
 			return null;
 		}
 
-		public static ICode    Code(int    id)   => LCode.Count > id ? LCode[id] : null;
+		public static ICode Code(int id) => LCode.Count > id ? LCode[id] : null;
 
 		public static Function Code(string name)
 		{
-			if (DCode.TryGetValue(name, out var function)) 
+			if (DCode.TryGetValue(name, out var function))
 				return function;
-			
+
 			MessageHandler.ShowError("Function \"" + name + "\" not found.");
 			return null;
 		}
@@ -120,7 +126,7 @@ namespace Learning_cards.Scripts.Data
 		public static void AddNewPlayer(Character character) => AddNewPlayer(new Player(character));
 
 		public static void AddNewPlayer(Player player)
-        {
+		{
 			Players.Add(player);
 			player.Code.Execute("start");
 		}

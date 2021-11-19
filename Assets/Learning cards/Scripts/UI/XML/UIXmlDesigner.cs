@@ -24,28 +24,47 @@ namespace Learning_cards.Scripts.UI.XML
 		public static List<GameObject> Layouts    = new List<GameObject>();
 		public static XmlLayout[]      UIElements = Array.Empty<XmlLayout>();
 
-		public static int SetUIElements(GameObject element)
+		private void Awake()
+		{
+			_instance = this;
+			foreach (Mods.Mod.Mod mod in LoadMods.ActiveMods)
+				if (File.Exists(mod.Xml))
+					LoadLayout(mod.Xml);
+		}
+
+		private void OnDestroy()
+		{
+			Layouts.Clear();
+			UIElements = Array.Empty<XmlLayout>();
+		}
+
+		private static int SetUIElements(GameObject element)
 		{
 			int i;
-			for (i = 0; i < UIElements.Length; i++) if (UIElements[i] == null) goto ret;
-			Array.Resize(ref UIElements, i+2);
+			for (i = 0; i < UIElements.Length; i++)
+				if (UIElements[i] == null)
+					goto ret;
+			Array.Resize(ref UIElements, i + 2);
 			ret:
 			element.SetActive(true);
 			UIElements[i] = element.GetComponent<XmlLayout>();
 			return i;
 		}
-		public static int SetUIElements(GameObject element, int id)
+
+		private static int SetUIElements(GameObject element, int id)
 		{
 			element.SetActive(true);
 			UIElements[id] = element.GetComponent<XmlLayout>();
 			return id;
 		}
+
 		public static int NewUIElement(int layoutId)
 		{
 			if (Layouts.Count > layoutId) return NewUIElement(Layouts[layoutId]);
 			MessageHandler.ShowError("Layout with id " + layoutId + " not found");
 			return -1;
 		}
+
 		public static int NewUIElement(int layoutId, int id)
 		{
 			if (Layouts.Count > layoutId) return NewUIElement(Layouts[layoutId], id);
@@ -55,46 +74,32 @@ namespace Learning_cards.Scripts.UI.XML
 
 		public static int NewUIElement(string layoutName)
 		{
-			var layout = Layouts.FirstOrDefault(x => x.name == layoutName);
+			GameObject layout = Layouts.FirstOrDefault(x => x.name == layoutName);
 			if (layout != null) return NewUIElement(layout);
 			MessageHandler.ShowError("Layout " + layoutName + " not found");
 			return -1;
 		}
+
 		public static int NewUIElement(string layoutName, int id)
 		{
-			var layout = Layouts.FirstOrDefault(x => x.name == layoutName);
+			GameObject layout = Layouts.FirstOrDefault(x => x.name == layoutName);
 			if (layout != null) return NewUIElement(layout, id);
 			MessageHandler.ShowError("Layout " + layoutName + " not found");
 			return -1;
 		}
 
-		static int NewUIElement(GameObject layout) 
+		private static int NewUIElement(GameObject layout)
 		{
-			var newElement = Instantiate(layout, _instance.transform);
-			newElement.name = "UIElement "+ UIElements.Length + ": " + layout.name;
+			GameObject newElement = Instantiate(layout, _instance.transform);
+			newElement.name = "UIElement " + UIElements.Length + ": " + layout.name;
 			return SetUIElements(newElement);
 		}
-		
-		static int NewUIElement(GameObject layout, int id) 
+
+		private static int NewUIElement(GameObject layout, int id)
 		{
-			var newElement = Instantiate(layout, _instance.transform);
-			newElement.name = "UIElement "+ UIElements.Length + ": " + layout.name;
+			GameObject newElement = Instantiate(layout, _instance.transform);
+			newElement.name = "UIElement " + UIElements.Length + ": " + layout.name;
 			return SetUIElements(newElement, id);
-		}
-
-		private void Awake()
-		{
-			_instance = this;
-			foreach (var mod in LoadMods.ActiveMods) 
-				if (File.Exists(mod.Xml)) LoadLayout(mod.Xml);
-
-			NewUIElement(0);
-		}
-
-		private void OnDestroy()
-		{
-			Layouts.Clear();
-			UIElements = Array.Empty<XmlLayout>();
 		}
 
 		private void LoadLayout(string path)
@@ -104,9 +109,7 @@ namespace Learning_cards.Scripts.UI.XML
 			foreach (XmlNode node in xmlDoc.Cast<XmlNode>().Where(node => node.Name == "layout"))
 				Layouts.Add(CreateUiLayout(node));
 
-			foreach (var layout in Layouts) {
-				layout.SetActive(false);
-			}
+			foreach (GameObject layout in Layouts) layout.SetActive(false);
 		}
 
 		private GameObject CreateUiLayout(XmlNode layoutNode, RectTransform parent = null, XmlLayout baseLayout = null)
@@ -123,9 +126,11 @@ namespace Learning_cards.Scripts.UI.XML
 							baseLayout = layoutObj.AddComponent<XmlLayoutCard>();
 							break;
 					}
+
 					break;
 				}
-				rTrans    = layoutObj.GetComponent<RectTransform>();
+
+				rTrans = layoutObj.GetComponent<RectTransform>();
 				rTrans.SetParent(parent);
 			} else {
 				layoutObj = new GameObject(layoutNode.Attributes[0].Value, typeof(RectTransform));

@@ -8,7 +8,7 @@ namespace Learning_cards.Scripts.Data.InternalCode
 		public string Execute(string input)
 		{
 			MessageHandler.ShowMessage(input);
-			return "";
+			return "NaN";
 		}
 	}
 }
