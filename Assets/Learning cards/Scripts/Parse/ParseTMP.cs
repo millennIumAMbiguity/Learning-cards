@@ -15,8 +15,7 @@ namespace Learning_cards.Scripts.Parse
 					text.fontSize = float.Parse(value);
 					return true;
 				case "color":
-					if (ColorUtility.TryParseHtmlString(value, out Color c))
-						text.color = c;
+					text.color.ParseValue(value);
 					return true;
 			}
 

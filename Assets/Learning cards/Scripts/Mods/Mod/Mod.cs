@@ -13,7 +13,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 		internal          Code Script;
 
 		private readonly ModContent _content;
-		private readonly string     _path;
+		public readonly string     Path;
 
 		public readonly string Title;
 		public readonly string Version;
@@ -26,7 +26,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 			if (path is null) return;
 			IsBuiltIn = builtIn;
 			var json = JsonUtility.FromJson<JsonModData>(File.ReadAllText($"{path}\\version.json"));
-			_path    = path;
+			Path    = path;
 			Xml     = path+'\\'+json.xml;
 			Title   = json.title;
 			Version = json.version;
@@ -58,7 +58,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 		public void GetFunctions(ref Dictionary<string, Function> dir, ref List<ICode> list)
 		{
 			if (!_content.HasFlag(ModContent.Functions) || PlayerPrefs.GetInt(Title + ".Functions", 1) == 0) return;
-			string[] functions = Directory.GetFiles(_path + "\\Functions");
+			string[] functions = Directory.GetFiles(Path + "\\Functions");
 
 			foreach (string function in functions) {
 				string title = function.Split('\\').Last().Split('.')[0];
@@ -72,7 +72,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 		public void GetCharacters(ref Dictionary<string, Character> dir, ref List<Character> list)
 		{
 			if (!_content.HasFlag(ModContent.Characters) || PlayerPrefs.GetInt(Title + ".Characters", 1) == 0) return;
-			string[] characters = Directory.GetFiles(_path + "\\Characters");
+			string[] characters = Directory.GetFiles(Path + "\\Characters");
 
 			foreach (string character in characters) {
 				string[] split = character.Split('\\').Last().Split('.');

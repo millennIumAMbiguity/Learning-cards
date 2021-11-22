@@ -18,6 +18,7 @@ namespace Learning_cards.Scripts.UI.XML
 	public class UIXmlDesigner : MonoBehaviour
 	{
 		private const string SchemaPath = "Files/UISchema.xsd";
+		public static string TargetPath = "";
 
 		private static UIXmlDesigner _instance;
 
@@ -28,8 +29,10 @@ namespace Learning_cards.Scripts.UI.XML
 		{
 			_instance = this;
 			foreach (Mods.Mod.Mod mod in LoadMods.ActiveMods)
-				if (File.Exists(mod.Xml))
+				if (File.Exists(mod.Xml)) {
+					TargetPath = mod.Path;
 					LoadLayout(mod.Xml);
+				}
 		}
 
 		private void OnDestroy()
@@ -155,6 +158,10 @@ namespace Learning_cards.Scripts.UI.XML
 						break;
 					case "outline":
 						layoutObj.AddComponent<Outline>().ParseAttributes(node.Attributes);
+						break;
+					case "image":
+						if (haveParent) layoutObj.name = "Image";
+						layoutObj.AddComponent<Image>().ParseAttributes(node.Attributes);
 						break;
 				}
 

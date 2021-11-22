@@ -10,8 +10,7 @@ namespace Learning_cards.Scripts.Parse
 		{
 			switch (name) {
 				case "color":
-					if (ColorUtility.TryParseHtmlString(value, out Color c))
-						outline.effectColor = c;
+					outline.effectColor.ParseValue(value);
 					break;
 				case "width":
 					float f = float.Parse(value);
