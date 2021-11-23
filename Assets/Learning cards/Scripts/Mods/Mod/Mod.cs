@@ -11,15 +11,18 @@ namespace Learning_cards.Scripts.Mods.Mod
 	{
 		internal readonly bool IsBuiltIn;
 		internal          Code Script;
+		internal          Code KeyEventScript;
 
 		private readonly ModContent _content;
-		public readonly string     Path;
+		public readonly  string     Path;
 
 		public readonly string Title;
 		public readonly string Version;
 		public readonly string Xml;
 
-		internal bool HaveScript => (_content & ModContent.Script) != 0;
+
+		internal bool HaveScript    => (_content & ModContent.Script) != 0;
+		internal bool HaveKeyEvents => (_content & ModContent.KeyEvents) != 0;
 
 		public Mod(string path, bool builtIn = false)
 		{
@@ -27,7 +30,7 @@ namespace Learning_cards.Scripts.Mods.Mod
 			IsBuiltIn = builtIn;
 			var json = JsonUtility.FromJson<JsonModData>(File.ReadAllText($"{path}\\version.json"));
 			Path    = path;
-			Xml     = path+'\\'+json.xml;
+			Xml     = path + '\\' + json.xml;
 			Title   = json.title;
 			Version = json.version;
 
@@ -45,6 +48,11 @@ namespace Learning_cards.Scripts.Mods.Mod
 			if (File.Exists(json.script = path + '\\' + json.script)) {
 				_content |= ModContent.Script;
 				Script   =  new Code(File.ReadAllText(json.script));
+			}
+
+			if (File.Exists(json.key = path + '\\' + json.key)) {
+				_content       |= ModContent.KeyEvents;
+				KeyEventScript =  new Code(File.ReadAllText(json.key));
 			}
 		}
 

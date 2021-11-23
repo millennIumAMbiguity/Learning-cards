@@ -12,5 +12,13 @@ namespace Learning_cards.Scripts.Data
 		{
 			foreach (Mod mod in LoadMods.ActiveMods.Where(mod => mod.HaveScript)) mod.Script.Execute("start");
 		}
+		
+		void OnGUI()
+		{
+			if (Event.current.isKey && Event.current.type == EventType.KeyDown && Event.current.keyCode != KeyCode.None)
+			{
+				foreach (Mod mod in LoadMods.ActiveMods.Where(mod => mod.HaveKeyEvents)) mod.KeyEventScript.Execute(Event.current.keyCode.ToString());
+			}
+		}
 	}
 }

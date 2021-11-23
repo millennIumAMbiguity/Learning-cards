@@ -56,6 +56,11 @@ namespace Learning_cards.Scripts.UI.XML
 
 		private static int SetUIElements(GameObject element, int id)
 		{
+			for (int i = 0; i < UIElements.Length; i++) {
+				if (UIElements[i] == null) continue;
+				UIElements[i].Destroy();
+				UIElements[i] = null;
+			}
 			element.SetActive(true);
 			UIElements[id] = element.GetComponent<XmlLayout>();
 			return id;
@@ -102,15 +107,20 @@ namespace Learning_cards.Scripts.UI.XML
 		{
 			GameObject newElement = Instantiate(layout, _instance.transform);
 			newElement.name = "UIElement " + UIElements.Length + ": " + layout.name;
-			return SetUIElements(newElement, id);
+			if (UIElements.Length == 0) UIElements = new XmlLayout[1];
+			return SetUIElements(newElement, id); ;
 		}
 
 		private void LoadLayout(string path)
 		{
 			XmlDocument xmlDoc = LoadDocumentWithSchemaValidation(path);
 
-			foreach (XmlNode node in xmlDoc.Cast<XmlNode>().Where(node => node.Name == "layout"))
-				Layouts.Add(CreateUiLayout(node));
+			if (xmlDoc["layout"] != null)
+				foreach (XmlNode node in xmlDoc.Cast<XmlNode>().Where(node => node.Name == "layout"))
+					Layouts.Add(CreateUiLayout(node));
+			else if (xmlDoc["layouts"] != null)
+				foreach (XmlNode node in xmlDoc["layouts"].Cast<XmlNode>().Where(node => node.Name == "layout"))
+					Layouts.Add(CreateUiLayout(node));
 
 			foreach (GameObject layout in Layouts) layout.SetActive(false);
 		}
@@ -122,23 +132,25 @@ namespace Learning_cards.Scripts.UI.XML
 			bool          haveParent = parent;
 			if (haveParent) {
 				layoutObj = new GameObject("Rect", typeof(RectTransform));
+				rTrans    = layoutObj.GetComponent<RectTransform>();
+				rTrans.SetParent(parent);
+			} else {
+				layoutObj = new GameObject(layoutNode.Attributes[0].Value, typeof(RectTransform));
+				rTrans    = layoutObj.GetComponent<RectTransform>();
+				rTrans.SetParent(transform);
+				
 				foreach (XmlAttribute attribute in layoutNode.Attributes) {
 					if (attribute.Name != "type") continue;
 					switch (attribute.Value) {
 						case "card":
 							baseLayout = layoutObj.AddComponent<XmlLayoutCard>();
 							break;
+						default:
+							baseLayout = layoutObj.AddComponent<XmlLayout>();
+							break;
 					}
-
 					break;
 				}
-
-				rTrans = layoutObj.GetComponent<RectTransform>();
-				rTrans.SetParent(parent);
-			} else {
-				layoutObj = new GameObject(layoutNode.Attributes[0].Value, typeof(RectTransform));
-				rTrans    = layoutObj.GetComponent<RectTransform>();
-				rTrans.SetParent(transform);
 			}
 
 			rTrans.ApplyAttributes(layoutNode.Attributes);

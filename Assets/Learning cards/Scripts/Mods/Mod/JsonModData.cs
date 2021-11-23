@@ -9,5 +9,6 @@ namespace Learning_cards.Scripts.Mods.Mod
 		public string version;
 		public string xml    = "Layouts.xml";
 		public string script = "script.txt";
+		public string key = "key event.txt";
 	}
 }

@@ -15,7 +15,6 @@ namespace Learning_cards.Scripts.Parse
 					img.color.ParseValue(value);
 					break;
 				case "src": {
-					Debug.Log("image load");
 					var tex = new Texture2D(1,1);
 					if (tex.LoadImage(System.IO.File.ReadAllBytes(UIXmlDesigner.TargetPath + '\\' + value)))
                         img.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));

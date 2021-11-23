@@ -64,6 +64,23 @@
         <xs:attribute type="xs:float" name="rotationZ"/>
     </xs:complexType>
 
+    <xs:complexType name="layouts">
+        <xs:sequence>
+            <xs:element name="layout" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="rect">
+                            <xs:attribute name="name" type="xs:string" use="required"/>
+                            <xs:attribute name="type" type="xs:string"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="layouts" type="layouts"/>
+
     <xs:element name="layout">
         <xs:complexType>
             <xs:complexContent>

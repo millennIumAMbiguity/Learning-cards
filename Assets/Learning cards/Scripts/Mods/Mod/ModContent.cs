@@ -11,5 +11,6 @@ namespace Learning_cards.Scripts.Mods.Mod
 		Functions    = 1 << 3,
 		Translations = 1 << 4,
 		Script       = 1 << 5,
+		KeyEvents   = 1 << 6,
 	}
 }
