@@ -10,7 +10,7 @@ namespace Learning_cards.Scripts.Parse
 		{
 			switch (name) {
 				case "color":
-					img.color.ParseValue(value);
+					img.color = img.color.ParseValue(value);
 					break;
 			}
 		}

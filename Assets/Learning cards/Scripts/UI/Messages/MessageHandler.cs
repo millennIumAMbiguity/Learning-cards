@@ -28,10 +28,10 @@ namespace Learning_cards.Scripts.UI.Messages
 		private void OnDestroy() => _messageHandler = null;
 
 		public static void ShowWarning(string text) =>
-			ShowMessage("<size=+6><b><color=yellow>WARNING:</color></b><size=-6>\n" + text);
+			ShowMessage("<size=+6><b><color=yellow>WARNING:</color></b></size>\n" + text);
 
 		public static void ShowError(string text) =>
-			ShowMessage("<size=+6><b><color=red>ERROR:</color></b><size=-6>\n" + text);
+			ShowMessage("<size=+6><b><color=red>ERROR:</color></b></size>\n" + text);
 
 		public static void ShowMessage(string text)
 		{

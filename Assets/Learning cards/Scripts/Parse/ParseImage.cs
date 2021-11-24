@@ -12,7 +12,7 @@ namespace Learning_cards.Scripts.Parse
 		{
 			switch (name) {
 				case "color":
-					img.color.ParseValue(value);
+					img.color = img.color.ParseValue(value);
 					break;
 				case "src": {
 					var tex = new Texture2D(1,1);
